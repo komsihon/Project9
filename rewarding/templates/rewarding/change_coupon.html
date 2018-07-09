@@ -1,0 +1,44 @@
+{% extends 'core/change_object_base.html' %}
+{% load i18n humanize staticfiles auth_tokens %}
+
+{% block page_title %}
+<title> {% if obj %}{{ obj.name }}{% else %}{% trans "New Card" %}{% endif %} - {{ service.project_name }} </title>
+{% endblock %}
+
+{% block head_style %}
+    {{ block.super }}
+    <link href="{% static 'ikwen/css/uploader-single.css' %}" media="screen" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block head_js %}
+    {{ block.super }}
+    <script src="{% static 'ikwen/ajaxuploader/js/fileuploader.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumb_location %}
+    <li>
+        <a href="{{ object_list_url }}">{{ verbose_name_plural|capfirst }}</a>
+    </li>
+    {% if obj %}
+        <li>{{ obj }}</li>
+    {% else %}
+        <li>{% trans 'New Card' %}</li>
+    {% endif %}
+{% endblock %}
+
+{% block admin_content %}
+    <div id="admin-content" class="change-form">
+        {% if errors %}<p class="alert alert-danger">{{ errors }}</p>{% endif %}
+        <form class="admin-form" method="post">{% csrf_token %}
+            <input type="hidden" name="image_url" id="image_url" value="{% if obj.image.name %}{{ obj.image.url }}{% endif %}" />
+            <div class="container-fluid">
+                {% include 'core/snippets/model_admin_form.html' %}
+                {% with model_name='rewarding.Card' image=obj.image image_field_name='image' label_field_name='name' img_help_text='Card image: 400px x 600px' %}
+                    {% include 'core/snippets/uploader_single.html' %}
+                {% endwith %}
+                <div class="form-group col-xs-12 col-sm-4 col-md-3" style="clear: both; padding-top: 15px">
+                    <button class="btn btn-sm btn-primary btn-block">{% trans "Save" %}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

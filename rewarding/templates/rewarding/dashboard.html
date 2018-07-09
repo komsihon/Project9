@@ -1,0 +1,122 @@
+{% extends "core/app_base_admin.html" %}
+{% load i18n humanize staticfiles auth_tokens admin_list %}
+
+{% block page_title %}
+<title>{% trans "Dashboard" %} - {% trans "Continuous Rewarding" %} - ikwen </title>
+{% endblock %}
+
+{% block head_style %}
+    {{ block.super }}
+    <link rel='stylesheet' href="{% static 'ikwen/css/dashboard.css' %}" />
+    <link href="{% static 'ikwen/css/rewarding.css' %}" media="screen" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block head_js %}
+    {{ block.super }}
+    <script src="{% static 'ikwen/swiper/js/swiper.jquery.min.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumb_location %}
+    <li>
+        <a href="{% url 'rewarding:configuration' %}">{% trans "Continuous Rewarding" %}</a>
+    </li>
+    <li>{% trans "Dashboard" %}</li>
+{% endblock %}
+
+{% block admin_content %}
+    <div id="admin-content">
+        <div class="container-fluid">
+            <div class="section-title perf">
+                <div>
+                    <h4 style="float: left">{% trans "Performances" %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</h4>
+                    <div class="dropdown" style="cursor: pointer; float: left; margin: 13px 0 0 15px">
+                        <span class="dropdown-toggle" id="period" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="target">{% trans "Today" %}</span>
+                            <span class="caret"></span>
+                        </span>
+                        <ul id="performances-period" class="dropdown-menu" aria-labelledby="period">
+                            <li data-target="today" style="display: none"><a>{% trans "Today" %}</a></li>
+                            <li data-target="yesterday"><a>{% trans "Yesterday" %}</a></li>
+                            <li data-target="last_week"><a>{% trans "Last week" %}</a></li>
+                            <li data-target="last_28_days"><a>{% trans "Last 28 days" %}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="row performances" style="clear: both">
+                <div class="col-sm-6">
+                    <div class="push-report">
+                        <header>
+                            <h5>{% trans "Pushes" %}</h5>
+                            <div class="clear"></div>
+                        </header>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div>{% trans "Sent" %}</div>
+                                <div>
+                                    <em class="report today">487</em>
+                                    <em class="report yesterday tpl">{{ orders_report.yesterday.count|intcomma }}</em>
+                                    <em class="report last_week tpl">{{ orders_report.last_week.count|intcomma }}</em>
+                                    <em class="report last_28_days tpl">{{ orders_report.last_28_days.count|intcomma }}</em>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div>{% trans "Views" %}</div>
+                                <div>
+                                    <em class="report today">
+                                        <span class="count">432</span>
+                                        <span class="ratio">83.1%</span>
+                                    </em>
+                                    <em class="report yesterday tpl">{{ orders_report.yesterday.count|intcomma }}</em>
+                                    <em class="report last_week tpl">{{ orders_report.last_week.count|intcomma }}</em>
+                                    <em class="report last_28_days tpl">{{ orders_report.last_28_days.count|intcomma }}</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <label>{% trans "By Mail" %} :</label>
+                                <span class="text-muted">47</span>
+                            </div>
+                            <div>
+                                <label>{% trans "By SMS" %} :</label>
+                                <span class="text-muted" style="padding-right: 15px">0</span>
+                                <a href="{% url 'rewarding:configuration' %}">{% trans "Activate SMS" %}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <header>
+                            <h5>{% trans "ACPP" %} <i class="text-muted">({% trans "Avg. Card Per Push" %})</i></h5>
+                            <div class="clear"></div>
+                        </header>
+                        <div style="padding-top: 3px">
+                            <p>
+                                <label>{% trans "Discounts" %}:</label>
+                                <span class="text-muted">0</span>
+                            </p>
+                            <p>
+                                <label>{% trans "Purchase Orders" %}:</label>
+                                <span class="text-muted">0</span>
+                            </p>
+                            <p>
+                                <label>{% trans "Gifts" %}:</label>
+                                <span class="text-muted">0</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="chart-stage">
+                <div class="btn-group pull-right" role="group" aria-label="...">
+                    <button type="button" class="btn btn-sm btn-default active">{% trans "Week" %}</button>
+                    <button type="button" class="btn btn-sm btn-default">{% trans "Month" %}</button>
+                </div>
+                <div class="chart"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

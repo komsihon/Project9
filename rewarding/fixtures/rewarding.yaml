@@ -1,0 +1,85 @@
+- model: rewarding.crbillingplan
+  pk: 593984fc0c279dc0f73b2281
+  fields:
+    name: Standard
+    slug: standard
+    audience_size: 1000
+    raw_monthly_cost: 5000
+    sms_monthly_cost: 1000
+
+- model: rewarding.croperatorprofile
+  pk: 56f00925b37b332f2aac9791
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    plan: 593984fc0c279dc0f73b2281
+    expiry: 2035-01-01T10:31:11.345Z
+
+- model: rewarding.coupon
+  pk: 593928184fc0c279dc0f73b1
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    name: Ndogmangolo
+    slug: ndogmangolo
+    type: Gift
+    status: Approved
+    description: Ndogmangolo
+
+- model: rewarding.coupon
+  pk: 593928184fc0c279dc0f73b2
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    name: 10% Off
+    slug: 10-off
+    type: Discount
+    status: Approved
+    description: 10% Off
+
+- model: rewarding.joinreward
+  pk: 5939280c2c0f73b24fc817d1
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b1
+    count: 10
+
+- model: rewarding.joinreward
+  pk: 5939280c2c0f73b24fc817d2
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b2
+    count: 20
+
+- model: rewarding.paymentreward
+  pk: 593922c0f73b24fc817d28c1
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b1
+    count: 20
+    floor: 0
+    ceiling: 5000
+
+- model: rewarding.paymentreward
+  pk: 593922c0f73b24fc817d28c2
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b1
+    count: 30
+    floor: 5000
+    ceiling: 15000
+
+- model: rewarding.paymentreward
+  pk: 593922c0f73b24fc817d28c3
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b2
+    count: 20
+    floor: 0
+    ceiling: 5000
+
+- model: rewarding.paymentreward
+  pk: 593922c0f73b24fc817d28c4
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b2
+    count: 40
+    floor: 5000
+    ceiling: 15000
