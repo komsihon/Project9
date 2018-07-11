@@ -1,0 +1,600 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<!-- utf-8 works for most cases -->
+		<meta name="viewport" content="width=device-width">
+		<!-- Forcing initial-scale shouldn't be necessary -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!-- Use the latest (edge) version of IE rendering engine -->
+		<title>Claim your Reward</title>
+		<!-- The title tag shows in email notifications, like Android 4.4. -->
+
+
+	<!-- CSS Reset -->
+		<style type="text/css">
+		/* What it does: Remove spaces around the email design added by some email clients. */
+
+			html, body {
+				margin: 0 !important;
+				padding: 0 !important;
+				height: 100% !important;
+				width: 100% !important;
+			}
+			/* What it does: Stops email clients resizing small text. */
+			* {
+				-ms-text-size-adjust: 100%;
+				-webkit-text-size-adjust: 100%;
+			}
+			/* What it does: Forces Outlook.com to display emails full width. */
+			.ExternalClass {
+				width: 100%;
+			}
+			/* What is does: Centers email on Android 4.4 */
+			div[style*="margin: 16px 0"] {
+				margin: 0 !important;
+			}
+			/* What it does: Stops Outlook from adding extra spacing to tables. */
+			table, td {
+				mso-table-lspace: 0pt !important;
+				mso-table-rspace: 0pt !important;
+			}
+			/* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+			table {
+/*				border-spacing: 0 !important;*/
+				border-collapse:separate !important;
+				table-layout: fixed !important;
+				margin: 0 auto !important;
+			}
+			table table table {
+				table-layout: auto;
+			}
+			/* What it does: Uses a better rendering method when resizing images in IE. */
+			img {
+				-ms-interpolation-mode: bicubic;
+			}
+			/* What it does: Overrides styles added when Yahoo's auto-senses a link. */
+			.yshortcuts a {
+				border-bottom: none !important;
+			}
+			/* What it does: Another work-around for iOS meddling in triggered links. */
+			a[x-apple-data-detectors] {
+				color: inherit !important;
+			}
+			
+			/* What it does : Set Animation */
+			.animated {
+			  -webkit-animation-duration: 1s;
+			  animation-duration: 1s;
+			  -webkit-animation-fill-mode: both;
+			  animation-fill-mode: both;
+			}
+
+			.animated.infinite {
+			  -webkit-animation-iteration-count: infinite;
+			  animation-iteration-count: infinite;
+			}
+
+			
+			@-webkit-keyframes pulse {
+			  from {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+
+			  50% {
+				-webkit-transform: scale3d(1.05, 1.05, 1.05);
+				transform: scale3d(1.05, 1.05, 1.05);
+			  }
+
+			  to {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+			}
+
+			@-moz-keyframes pulse {
+			  from {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+
+			  50% {
+				-webkit-transform: scale3d(1.05, 1.05, 1.05);
+				transform: scale3d(1.05, 1.05, 1.05);
+			  }
+
+			  to {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+			}
+			
+			@-o-keyframes pulse {
+			  from {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+
+			  50% {
+				-webkit-transform: scale3d(1.05, 1.05, 1.05);
+				transform: scale3d(1.05, 1.05, 1.05);
+			  }
+
+			  to {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+			}
+			
+			@-ms-keyframes pulse {
+			  from {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+
+			  50% {
+				-webkit-transform: scale3d(1.05, 1.05, 1.05);
+				transform: scale3d(1.05, 1.05, 1.05);
+			  }
+
+			  to {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+			}
+			
+			@keyframes pulse {
+			  from {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+
+			  50% {
+				-webkit-transform: scale3d(1.05, 1.05, 1.05);
+				transform: scale3d(1.05, 1.05, 1.05);
+			  }
+
+			  to {
+				-webkit-transform: scale3d(1, 1, 1);
+				transform: scale3d(1, 1, 1);
+			  }
+			}
+
+			.pulse:hover {
+			  -webkit-animation-name: pulse;
+			  animation-name: pulse;
+			}
+			
+		</style>
+
+	<!-- Progressive Enhancements -->
+		<style type="text/css">
+		/* What it does: Hover styles for buttons */
+		.button-td, .button-a {
+			transition: all 100ms ease-in;
+		}
+		.button-td:hover, .button-a:hover {
+			background: #f28632 !important;
+			border-color: #f28632 !important;
+		}
+
+		/* Media Queries */
+		@media screen and (max-width: 480px) {
+		/* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
+		.fluid, .fluid-centered {
+			width: 100% !important;
+			max-width: 100% !important;
+			height: auto !important;
+			margin-left: auto !important;
+			margin-right: auto !important;
+		}
+		/* And center justify these ones. */
+		.fluid-centered {
+			margin-left: auto !important;
+			margin-right: auto !important;
+		}
+		/* What it does: Forces table cells into full-width rows. */
+		.stack-column, .stack-column-center {
+			display: block !important;
+			width: 100% !important;
+			max-width: 100% !important;
+			direction: ltr !important;
+		}
+		/* And center justify these ones. */
+		.stack-column-center {
+			text-align: center !important;
+		}
+		/* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
+		.center-on-narrow {
+			text-align: center !important;
+			display: block !important;
+			margin-left: auto !important;
+			margin-right: auto !important;
+			float: none !important;
+		}
+			.mobil-font-size{
+				font-size: 22px !important;
+			}
+		table.center-on-narrow {
+			display: inline-block !important;
+		}
+		}
+		</style>
+	</head>
+	<body width="100%" bgcolor="#e0e0e0" style="margin: 0;" yahoo="yahoo">
+		<table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" bgcolor="#e0e0e0" style="border-collapse:collapse;">
+	  		<tr>
+				<td>
+					<center style="width: 100%;">
+
+				<!-- Visually Hidden Preheader Text : BEGIN -->
+						<div style="display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family: 'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;">1 achat = 1 cadeau avec votre profil ikwen ! 
+						</div>
+				<!-- Visually Hidden Preheader Text : END -->
+
+						<div style="max-width: 680px; box-shadow: 0 5px 5px 0 #bfbfbf; font-family: 'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;"> 
+				  <!--[if (gte mso 9)|(IE)]>
+					<table cellspacing="0" cellpadding="0" border="0" width="680" align="center">
+					<tr>
+					<td>
+					<![endif]-->
+							
+				  <!-- Email Header : BEGIN -->
+				  
+				  <!-- Email Header : END -->
+
+				  <!-- Email Body : BEGIN -->
+				  		<table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff" width="100%" style="max-width: 680px;">
+
+
+
+					<!-- Text with Background band : BEGIN -->
+							<tr>
+							  <td bgcolor="#233682" valign="middle" style="text-align: center; background-position: center !important; background-size: cover !important;">
+								  <!--[if gte mso 9]>
+										<v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:680px;height:175px; background-position: center center !important;">
+										<v:fill type="tile" src="assets/Hybrid/Image_680x230.png" color="#222222" />
+										<v:textbox inset="0,0,0,0">
+										<![endif]-->
+
+									<div style="padding: 0 0 5px 0; text-align: center; border-bottom: 2px solid #EEEEEE"> 
+									  <!--[if mso]>
+												<table border="0" cellspacing="0" cellpadding="0" align="center" width="500">
+												<tr>
+												<td align="center" valign="top" width="500">
+												<![endif]-->
+										<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+											<tr>
+												<td class="mobil-font-size" valign="middle" style="text-align: left; padding: 20px; font-size: 30px; mso-height-rule: exactly; line-height: 35px; color: #ffffff;"> Vous avez gagné <span style="color:#f28632;">{{coupon_count}} coupons {{project_name}}</span></td>
+											</tr>
+										</table>
+									  <!--[if (gte mso 9)|(IE)]>
+												</td>
+												</tr>
+												</table>
+												<![endif]--> 
+									</div>
+
+								<!--[if gte mso 9]>
+										</v:textbox>
+										</v:rect>
+										<![endif]-->
+								</td>
+							</tr>
+					<!-- Text with Background band : END -->
+					
+							
+					<!-- Thumbnail Left, Text Right : BEGIN -->
+							<tr>
+							  <td dir="ltr" bgcolor="#F3F3F3" align="center" height="100%" valign="top" width="100%" style="padding: 10px 0 0 0;"><!--[if mso]>
+										<table border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+										<tr>
+										<td align="center" valign="top" width="660">
+										<![endif]-->
+
+								<table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:660px; border: 4px solid #EEEEEE;">
+								  <tr>
+									<td align="left" valign="top" style="font-size:0; padding: 0 15px;"><!--[if mso]>
+													<table border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+													<tr>
+													<td align="left" valign="top" width="220">
+													<![endif]-->
+
+									  <div style="display:inline-block; margin: 0 -2px; max-width:1%; min-width:100px; vertical-align:top; width:100%;" class="stack-column">
+														<table cellspacing="0" cellpadding="0" border="0" width="100%">
+														  <tr>
+															<td style="padding: 20px 10px 10px 10px;"><a href="{{ site_url}}"><img src="img/tchopetyamologo.png" width="200" alt="" style="border: 0;width: 100%;max-width: 100px;height: auto;" class="center-on-narrow"></a></td>
+														  </tr>
+														</table>
+													  </div>
+
+									  <!--[if mso]>
+													</td>
+													<td align="left" valign="top" width="440">
+													<![endif]-->
+
+									  <div style="display:inline-block; margin: 0 -2px; max-width:70%; min-width:320px; vertical-align:top;" class="stack-column">
+										<table cellspacing="0" cellpadding="0" border="0" width="100%">
+										  <tr>
+											<td dir="ltr" style="ont-family: 'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif; font-size: 18px; mso-height-rule: exactly; line-height: 20px; color: #555555; padding: 10px 10px 0; text-align: justify;" class="center-on-narrow"><strong style="color:#111111;">Communauté {{ project_name }}</strong> <br>
+											  <br>
+											  Cher {{ buyer_name }}, <br>
+											  Suite à votre achat en ligne sur <a href="http://www.tchopetyamo.com" style="text-decoration: none">{{ site_url }}</a>, vous avez gagné {{ coupon_count}} coupons. Collectionnez en 100 pour les échanger chez {{ project_name }} contre le lot équivalent. Cliquez sur vos cadeaux pour les récupérer !<br>
+											  <br>
+											  <br>
+
+											  <!-- Image Button : BEGIN -->
+
+																<table cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
+																	<tr>
+																		<td style="border-radius: 3px; text-align: left;">
+																			<a href="http://www.ikwen.com/"> <img src="img/gift-2.png" width="500" alt="Gift_picture" style="border: 0;width: 100%;max-width: 400px;height: auto;" class="center-on-narrow animated infinite pulse"></a>
+																		</td>
+																	</tr>
+																</table>
+												<!-- Image Button : END --></td>
+										  </tr>
+										</table>
+									  </div>
+
+									  <!--[if mso]>
+													</td>
+													</tr>
+													</table>
+													<![endif]--></td>
+								  </tr>
+								</table>
+								  <br>
+								  <!--[if mso]>
+										</td>
+										</tr>
+										</table>
+										<![endif]--></td>
+							</tr>
+           		 <!-- Thumbnail Left, Text Right : END -->
+					<!-- 1 Column Text : BEGIN -->
+							<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+					  			<td bgcolor="#F3F3F3" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+									<table border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" align="center" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:660px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+								  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+									<td align="left" valign="top" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:0;padding-top:0;padding-bottom:10px;padding-right:0;padding-left:20px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+													<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+													<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+
+									  <p style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-size: 18px; line-height: 25px;">
+													Votre commande est disponible sous le RCC : <strong>{{ rcc }}</strong><br>
+													<span style="text-decoration: underline">Détails de la commande :</span> <br>
+													{{ items_count}}, item(s) pour un coût total de<br>
+										  			{{ price_total }} XAF.<br>
+													<br>
+													<strong style="text-decoration: underline">Commande détaillée</strong>
+													
+												</p>
+
+									  <!--[if mso]>
+													</td>
+													</tr>
+													</table>
+													<![endif]--></td>
+								  </tr>
+								</table>
+								</td>
+							</tr>
+							
+					<!-- 1 Column Text : END -->
+				<!-- Thumbnail Left, Text Right : BEGIN -->
+							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+							  <td dir="ltr" bgcolor="#F3F3F3" align="center" height="100%" valign="top" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:0; padding:0;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+										<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+										<td align="center" valign="top" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+										<![endif]-->
+
+								<table border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" align="center" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:660px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+								  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+									<td align="center" valign="top" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:0;padding-top:0;padding-bottom:10px;padding-right:0;padding-left:0;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+													<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+													<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+
+									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:160px;vertical-align:top;width:100%;" >
+										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											<td dir="ltr" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:0;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><img src="img/BHB.jpg" width="200" alt=""  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:200px;height:auto;-ms-interpolation-mode:bicubic;" ></td>
+										  </tr>
+										</table>
+									  </div>
+
+									  <!--[if mso]>
+													</td>
+													<td align="left" valign="top" width="440" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+
+									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:66.66%;min-width:320px;vertical-align:top;" >
+										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{{ item_purchased }}</strong>
+															  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="margin-bottom: 0;">
+																		  &#8226; Price : {{ item_price }}<br>
+																		  &#8226; Quantity : {{ item_quantity }}<br>
+																		  &#8226; Subtotal : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+
+											 </td>
+										  </tr>
+										</table>
+									  </div>
+
+									  <!--[if mso]>
+													</td>
+													</tr>
+													</table>
+													<![endif]--></td>
+								  </tr>
+								</table>
+
+								<!--[if mso]>
+										</td>
+										</tr>
+										</table>
+										<![endif]--></td>
+							</tr>
+						<!-- Thumbnail Left, Text Right : END -->
+						<!-- Thumbnail Left, Text Right : BEGIN -->
+							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+							  <td dir="ltr" bgcolor="#F3F3F3" align="center" height="100%" valign="top" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding:0;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+										<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+										<td align="center" valign="top" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+										<![endif]-->
+
+								<table border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" align="center" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:660px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+								  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+									<td align="center" valign="top" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:0;padding:0;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+													<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+													<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+
+									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:160px;vertical-align:top;width:100%;" >
+										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											<td dir="ltr" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:0;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><img src="img/BHB.jpg" width="200" alt=""  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:200px;height:auto;-ms-interpolation-mode:bicubic;" ></td>
+										  </tr>
+										</table>
+									  </div>
+
+									  <!--[if mso]>
+													</td>
+													<td align="left" valign="top" width="440" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+
+									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:66.66%;min-width:320px;vertical-align:top;" >
+										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{{ item_purchased }}</strong>
+															  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="margin-bottom: 0;">
+																		  &#8226; Price : {{ item_price }}<br>
+																		  &#8226; Quantity : {{ item_quantity }}<br>
+																		  &#8226; Subtotal : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+
+											 </td>
+										  </tr>
+										</table>
+									  </div>
+
+									  <!--[if mso]>
+													</td>
+													</tr>
+													</table>
+													<![endif]--></td>
+								  </tr>
+								</table>
+
+								<!--[if mso]>
+										</td>
+										</tr>
+										</table>
+										<![endif]--></td>
+							</tr>
+						<!-- Thumbnail Left, Text Right : END -->
+							<!-- 1 Column Text : BEGIN -->
+							<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+					  			<td bgcolor="#F3F3F3" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+									<table border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" align="center" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:660px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+								  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+									<td align="left" valign="top" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:0;padding-top:0;padding-bottom:10px;padding-right:0;padding-left:20px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+													<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+													<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+										<div style="width: 80%; margin: auto; padding: 0 0 5px 0; text-align: center;">
+										  <p style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-size: 18px; line-height: 25px; margin-top: 0">
+											  Merci pour votre achat et à trés bientôt.
+										  </p>
+										</div>
+
+									  <!--[if mso]>
+													</td>
+													</tr>
+													</table>
+													<![endif]--></td>
+								  </tr>
+								</table>
+								</td>
+							</tr>
+							
+					<!-- 1 Column Text : END -->
+							<!-- 1 Column Text : BEGIN -->
+							<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+					  			<td bgcolor="#F3F3F3" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+									<table border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" align="center" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:660px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+								  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+									<td align="left" valign="top" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:0;padding-top:0;padding-bottom:10px;padding-right:0;padding-left:20px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
+													<table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+													<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+													<![endif]-->
+										<div style="width: 80%; margin: auto; padding: 15px 0 5px 0; text-align: center; border-top: 2px solid #EEEEEE">
+										  <p style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-size: 18px; line-height: 25px;">
+											  Collectionnez un maximum de coupons grâce aux achats en ligne. <br>
+											  Rendez-vous sur <a href="http://www.tchopetyamo.com" style="text-decoration: none">{{ site_url }}</a>
+										  </p>
+										</div>
+
+									  <!--[if mso]>
+													</td>
+													</tr>
+													</table>
+													<![endif]--></td>
+								  </tr>
+								</table>
+								</td>
+							</tr>
+							
+					<!-- 1 Column Text : END -->
+							
+							</table>
+							  <!-- Email Body : END --> 
+
+
+							  <!-- Email Footer : BEGIN -->
+							<table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#F3F3F3" width="100%" style="max-width: 680px; padding-top: 15px">
+								<tr> </tr>
+								<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+								  <td align="center" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+										<div>
+									<p><span style="font-size: 12px; color: #555555;">© 2018 {{ project_name }}, Inc. All Rights Reserved.</span></p>
+					<!--
+										  <p><span style="color: #555555; font-size: 12px;"><span style="font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; font-family: 'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif; float: none; 
+										  display: inline !important;"><strong>You're opinion matters! Let us know how we're doing in this <a href="http:www.ikwen.com/survey" target="_blank" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; text-decoration: none; color: #4834d4;">1-minute survey</a></strong>.</span></span></p> 
+					-->
+										  <p><span style="color: #555555; font-size: 12px; padding-bottom: 40px">
+											<span style="font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; 
+										  display: inline !important;"><a href="{{ site_url_about}}" target="_blank" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; text-decoration: none; color: #4834d4;  padding-bottom: 30px">About us</a>&nbsp;| If you would like to unsubscribe</span>
+										  <span style="font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; display: 
+										  inline !important;">.</span></span></p>
+								    </div>
+								  </td>
+								</tr>
+							</table>
+
+							  <!-- Email Footer : END --> 
+
+							  <!--[if (gte mso 9)|(IE)]>
+								</td>
+								</tr>
+								</table>
+								<![endif]--> 
+						</div>
+		  			</center>
+				</td>
+	  		</tr>
+		</table>
+	</body>
+</html>
