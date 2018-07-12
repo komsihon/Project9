@@ -327,7 +327,7 @@
 									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:1%;min-width:100px;vertical-align:top;width:100%;" >
 														<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 														  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-															<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:20px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><a href="{{ site_url}}" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="img/tchopetyamologo.png" width="200" alt=""  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:100px;height:auto;-ms-interpolation-mode:bicubic;" ></a></td>
+															<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:20px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><a href="{{ site_url}}" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt=""  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:100px;height:auto;-ms-interpolation-mode:bicubic;" ></a></td>
 														  </tr>
 														</table>
 													  </div>
@@ -340,10 +340,10 @@
 									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:70%;min-width:320px;vertical-align:top;" >
 										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;ont-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:justify;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >Communauté {{ project_name }}</strong> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;ont-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:justify;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{% blocktrans %} {{ project_name }} community {% endblocktrans %}</strong> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											  Cher {{ buyer_name }}, <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											  Suite à votre achat en ligne sur <a href="http://www.tchopetyamo.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:none;" >{{ site_url }}</a>, vous avez gagné {{ coupon_count}} coupons. Collectionnez-en 100 pour les échanger chez {{ project_name }} contre le lot équivalent. Cliquez sur vos cadeaux pour les récupérer !<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  {% blocktrans %} Cher {{ buyer_name }}, <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  Suite à votre achat en ligne sur <a href="http://www.tchopetyamo.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:none;" >{{ site_url }}</a>, vous avez gagné {{ coupon_count}} coupons. Collectionnez-en 100 pour les échanger chez {{ project_name }} contre le lot équivalent. Cliquez sur vos cadeaux pour les récupérer !<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" > {% endblocktrans %}
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
@@ -352,7 +352,7 @@
 																<table cellspacing="0" cellpadding="0" border="0" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;table-layout:fixed !important;" >
 																	<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 																		<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-radius:3px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-																			<a href="http://www.ikwen.com/" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" > <img src="img/gift-2.png" width="500" alt="Gift_picture"  class="center-on-narrow animated infinite pulse" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:400px;height:auto;-ms-interpolation-mode:bicubic;-webkit-animation-duration:1s;animation-duration:1s;-webkit-animation-fill-mode:both;animation-fill-mode:both;" ></a>
+																			<a href="http://www.ikwen.com/" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" > <img src="{% static 'rewarding/img/gift-2.png' %}" width="500" alt="Gift_picture"  class="center-on-narrow animated infinite pulse" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:400px;height:auto;-ms-interpolation-mode:bicubic;-webkit-animation-duration:1s;animation-duration:1s;-webkit-animation-fill-mode:both;animation-fill-mode:both;" ></a>
 																		</td>
 																	</tr>
 																</table>
@@ -387,13 +387,13 @@
 													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
 													<![endif]-->
 
-									  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;" >
+									  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;" >{% blocktrans %}
 													Votre commande est disponible sous le RCC : <strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ rcc }}</strong><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:underline;" >Détails de la commande :</span> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 													{{ items_count}}, item(s) pour un coût total de<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 										  			{{ price_total }} XAF.<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 													<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-													<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:underline;" >Commande détaillée</strong>
+													<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:underline;" >Commande détaillée</strong> {% endblocktrans %}
 													
 												</p>
 
@@ -442,9 +442,9 @@
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{{ item_purchased }}</strong>
 															  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-bottom:0;" >
-																		  &#8226; Price : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Quantity : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Subtotal : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Price" %} : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Quantity" %} : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Subtotal" %} : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
 											 </td>
@@ -501,9 +501,9 @@
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{{ item_purchased }}</strong>
 															  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-bottom:0;" >
-																		  &#8226; Price : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Quantity : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Subtotal : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Price" %} : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Quantity" %} : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Subtotal" %} : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
 											 </td>
@@ -538,7 +538,7 @@
 													<![endif]-->
 										<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:80%;margin-top:auto;margin-bottom:auto;margin-right:auto;margin-left:auto;padding-top:0;padding-bottom:5px;padding-right:0;padding-left:0;text-align:center;" >
 										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;margin-top:0;" >
-											  Merci pour votre achat et à trés bientôt.
+											  {% trans "Merci pour votre achat et à trés bientôt." %}
 										  </p>
 										</div>
 
@@ -564,10 +564,10 @@
 													<td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
 													<![endif]-->
 										<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:80%;margin-top:auto;margin-bottom:auto;margin-right:auto;margin-left:auto;padding-top:15px;padding-bottom:5px;padding-right:0;padding-left:0;text-align:center;border-top-width:2px;border-top-style:solid;border-top-color:#EEEEEE;" >
-										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;" >
+										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;" >{% blocktrans %}
 											  Collectionnez un maximum de coupons grâce aux achats en ligne. <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  Rendez-vous sur <a href="http://www.tchopetyamo.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:none;" >{{ site_url }}</a>
-										  </p>
+										  {% endblocktrans %}}</p>
 										</div>
 
 									  <!--[if mso]>
@@ -592,12 +592,12 @@
 								<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 								  <td align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
 										<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-									<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:12px;color:#555555;" >© 2018 {{ project_name }}, Inc. All Rights Reserved.</span></p>
+                                            <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:12px;color:#555555;" >© {{ year }} <a href="http://ikwen.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >ikwen, Inc.</a> {% trans "All Rights Reserved." %}</span></p>
 					<!--
-										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555555;font-size:12px;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;orphans:2;text-align:center;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;float:none;display:inline !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >You're opinion matters! Let us know how we're doing in this <a href="http:www.ikwen.com/survey" target="_blank" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;text-decoration:none;color:#4834d4;" >1-minute survey</a></strong>.</span></span></p> 
+										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555555;font-size:12px;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;orphans:2;text-align:center;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;float:none;display:inline !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >You're opinion matters! Let us know how we're doing in this <a href="http:www.ikwen.com/survey" target="_blank" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;text-decoration:none;color:#4834d4;" >1-minute survey</a></strong>.</span></span></p>
 					-->
 										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555555;font-size:12px;padding-bottom:40px;" >
-											<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;orphans:2;text-align:center;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;float:none;display:inline !important;" ><a href="{{ site_url_about}}" target="_blank" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;text-decoration:none;color:#4834d4;padding-bottom:30px;" >About us</a>&nbsp;| If you would like to unsubscribe</span>
+											<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;orphans:2;text-align:center;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;float:none;display:inline !important;" ><a href="http://www.ikwen.com/about" target="_blank" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;text-decoration:none;color:#4834d4;padding-bottom:30px;" >About us</a>&nbsp;| If you would like to unsubscribe</span>
 										  <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;orphans:2;text-align:center;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;float:none;display:inline !important;" >.</span></span></p>
 								    </div>
 								  </td>

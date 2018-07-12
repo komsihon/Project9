@@ -185,10 +185,10 @@
 												<![endif]-->
 										<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 											<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-												<td class="mobil-font-size" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:left;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;font-size:20px;mso-height-rule:exactly;line-height:35px;color:#ffffff;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" > Votre commande est disponible sous le RCC : <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#f28632;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ rcc }}</strong><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ></span>
+												<td class="mobil-font-size" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:left;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;font-size:20px;mso-height-rule:exactly;line-height:35px;color:#ffffff;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >{% blocktrans %} Votre commande est disponible sous le RCC : <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#f28632;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ rcc }}</strong><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ></span>
 													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:underline;" >Détails de la commande :</span> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 													{{ items_count}}, item(s) pour un coût total de<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-										  			{{ price_total }} XAF.</td>
+										  			{{ price_total }} XAF. {% endblocktrans %}</td>
 											</tr>
 										</table>
 									  <!--[if (gte mso 9)|(IE)]>
@@ -220,7 +220,7 @@
 													<![endif]-->
 
 									  <strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;text-decoration:underline;" >
-										Commande détaillée
+										{% trans "Commande détaillée" %}
 										</p></strong>
 
 									  <!--[if mso]>
@@ -268,9 +268,9 @@
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{{ item_purchased }}</strong>
 															  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-bottom:0;" >
-																		  &#8226; Price : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Quantity : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Subtotal : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Price" %} : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Quantity" %} : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Subtotal" %} : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
 											 </td>
@@ -327,9 +327,9 @@
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{{ item_purchased }}</strong>
 															  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-bottom:0;" >
-																		  &#8226; Price : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Quantity : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-																		  &#8226; Subtotal : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Price" %} : {{ item_price }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Quantity" %} : {{ item_quantity }}<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+																		  &#8226; {% trans "Subtotal" %} : {{ item_price_subtotal }}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
 											 </td>
@@ -364,7 +364,7 @@
 													<![endif]-->
 										<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:80%;margin-top:auto;margin-bottom:auto;margin-right:auto;margin-left:auto;padding-top:0;padding-bottom:5px;padding-right:0;padding-left:0;text-align:center;" >
 										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;line-height:25px;margin-top:0;" >
-											  Merci pour votre achat et à très bientôt.
+											  {% trans "Merci pour votre achat et à très bientôt." %}
 										  </p>
 										</div>
 
