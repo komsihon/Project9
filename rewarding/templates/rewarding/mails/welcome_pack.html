@@ -1,3 +1,4 @@
+{% load i18n humanize static %}
 <!doctype html>
 <html style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margin-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important;padding-left:0 !important;height:100% !important;width:100% !important;" >
 	<head style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
@@ -7,7 +8,7 @@
 		<!-- Forcing initial-scale shouldn't be necessary -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 		<!-- Use the latest (edge) version of IE rendering engine -->
-		<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >Welcome to our Community</title>
+		<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "Welcome to our Community" %}</title>
 		<!-- The title tag shows in email notifications, like Android 4.4. -->
 
 
@@ -227,6 +228,7 @@
 		}
 		</style>
 	</head>
+    {% with project_name=service.project_name company_name=config.company_name site_url=service.url %}
 	<body width="100%" bgcolor="#e0e0e0"  yahoo="yahoo" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margin-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important;padding-left:0 !important;height:100% !important;width:100% !important;" >
 		<table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" bgcolor="#e0e0e0" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-collapse:separate !important;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;table-layout:fixed !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;" >
 	  		<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
@@ -234,7 +236,7 @@
 					<center style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:100%;" >
 
 				<!-- Visually Hidden Preheader Text : BEGIN -->
-						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >Take your welcome gift! 
+						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >{% trans "Welcome to our community" %}
 						</div>
 				<!-- Visually Hidden Preheader Text : END -->
 
@@ -250,7 +252,7 @@
 					<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 					  <td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
 						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:100%;margin-top:auto;margin-bottom:auto;margin-right:auto;margin-left:auto;padding-top:15px;padding-bottom:5px;padding-right:0;padding-left:0;text-align:left;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#EEEEEE;" >
-						  <a href="http://www.ikwen.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="img/New-logo-ikwen-mail_200x49.png" width="100" height="auto" alt="ikwen website" border="0" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-left:20px;-ms-interpolation-mode:bicubic;" ></a>
+						  <a href="http://www.ikwen.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="{% static 'rewarding/img/New-logo-ikwen-mail_200x49.png' %}" width="100" height="auto" alt="ikwen website" border="0" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-left:20px;-ms-interpolation-mode:bicubic;" ></a>
 						</div>				
 						</td>
 					</tr>
@@ -279,7 +281,11 @@
 												<![endif]-->
 										<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 											<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-												<td class="mobil-font-size" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:left;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;font-size:30px;mso-height-rule:exactly;line-height:35px;color:#ffffff;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" > Bienvenue dans la communauté <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#f28632;" >{{project_name}}</span></td>
+												<td class="mobil-font-size" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:left;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;font-size:30px;mso-height-rule:exactly;line-height:35px;color:#ffffff;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+                                                    {% blocktrans %}
+                                                    Welcome to <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#f28632;" >{{ project_name }}</span> community
+                                                    {% endblocktrans %}
+                                                </td>
 											</tr>
 										</table>
 									  <!--[if (gte mso 9)|(IE)]>
@@ -317,7 +323,7 @@
 									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:1%;min-width:100px;vertical-align:top;width:100%;" >
 														<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 														  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-															<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:20px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><a href="http://www.tchopetyamo.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="images/tchopetyamologo.png" width="200" alt=""  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:100px;height:auto;-ms-interpolation-mode:bicubic;" ></a></td>
+															<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:20px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><a href="{{ site_url }}" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt=""  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:100px;height:auto;-ms-interpolation-mode:bicubic;" ></a></td>
 														  </tr>
 														</table>
 													  </div>
@@ -330,18 +336,20 @@
 									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:66.66%;min-width:320px;vertical-align:top;" >
 										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:25px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><di style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ></di><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >Plein de bonnes choses vous attendent !</strong> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:18px;mso-height-rule:exactly;line-height:25px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><di style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ></di><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{% trans "Great things are waiting for you !" %}</strong> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% blocktrans %}
 											  Profitez chaque jour de coupons à collectionner offerts gratuitement.<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-												Collectionnez-les pour bénéficier d'offres promotionelles, de tarifs préférentiels, de cadeaux exceptionnels et plus encore. Cliquez sur votre cadeau de bienvenue pour le récupérer... <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+												Collectionnez-les pour bénéficier d'offres promotionelles, de tarifs préférentiels,
+                                                    de cadeaux exceptionnels et plus encore. Cliquez sur votre cadeau de bienvenue pour le récupérer... <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  {% endblocktrans %}
+                                                <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
 											  <!-- Image Button : BEGIN -->
 
 																<table cellspacing="0" cellpadding="0" border="0" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;table-layout:fixed !important;" >
 																	<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 																		<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-radius:3px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-																			<a href="http://www.ikwen.com/" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" > <img src="images/gift-1.png" width="300" alt="Gift_picture"  class="center-on-narrow animated infinite pulse" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:200px;height:auto;-ms-interpolation-mode:bicubic;-webkit-animation-duration:1s;animation-duration:1s;-webkit-animation-fill-mode:both;animation-fill-mode:both;" ></a>
+																			<a href="http://www.ikwen.com/console/" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" > <img src="{% static 'rewarding/img/gift-1.png' %}" width="300" alt="Gift_picture"  class="center-on-narrow animated infinite pulse" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:200px;height:auto;-ms-interpolation-mode:bicubic;-webkit-animation-duration:1s;animation-duration:1s;-webkit-animation-fill-mode:both;animation-fill-mode:both;" ></a>
 																		</td>
 																	</tr>
 																</table>
@@ -384,16 +392,16 @@
 									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;max-width:50%;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;min-width:200px;vertical-align:top;width:100%;" >
 										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-										    <td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;mso-height-rule:exactly;line-height:25px;color:#555555;padding-top:15px;padding-bottom:10px;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >Comment collectionner des coupons ?</strong>
+										    <td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;mso-height-rule:exactly;line-height:25px;color:#555555;padding-top:15px;padding-bottom:10px;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{% trans "How to collect coupons ?" %}</strong>
 										      <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 												<div class="screen-adjust" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;height:200px;" >
-													<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:10px;margin-bottom:0;" >Les coupons se collectent de 3 façons :
+													<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:10px;margin-bottom:0;" >{% trans "There a 3 ways of collecting coupons :" %}
 													<ul style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:5px;margin-bottom:5px;margin-right:0;margin-left:0;" >
-													  <li style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >Acheter en ligne</li>
-													  <li style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >Appartenir à une (des) communauté(s)</li>
-													  <li style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >Rester actif sur vos différentes plateformes</li>
+													  <li style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "Buy online" %}</li>
+													  <li style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "Join a community" %}</li>
+													  <li style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "Visit companies websites very often" %}</li>
 													</ul>
-													Toutes vos actions sont récompensées.
+													{% trans "All your actions are rewarded." %}
 													</p>
 												</div>
 										      
@@ -421,12 +429,14 @@
 									  <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;max-width:50%;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;min-width:200px;vertical-align:top;width:100%;" >
 										<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 										  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-										    <td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;mso-height-rule:exactly;line-height:25px;color:#555555;padding-top:15px;padding-bottom:10px;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >Comment récupérer mes gains ?</strong>
+										    <td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;mso-height-rule:exactly;line-height:25px;color:#555555;padding-top:15px;padding-bottom:10px;padding-right:10px;padding-left:10px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >{% trans "How to collect my earnings ?" %}</strong>
 										      <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 												<div class="screen-adjust" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;height:200px;" >
 													<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:10px;margin-bottom:0;height:180px;" >
-														Une fois que vous avez réunis 100 coupons du même item, vous pouvez les échanger contre le(s) item(s) équivalent(s) directement en magasin et sans frais supplémentaires ! Il existe 3 types de coupons, récupérer les tous.
-													</p>												
+														Once you’ve collected 100 coupons of the same type, you can use them when ordering
+                                                        online. For instance, if it is a gift coupon, your order will complete without
+                                                        you being asked to pay! There are 3 types of coupons. Get them all !
+                                                    </p>
 												</div>
 											<!-- Button : Begin -->
 										      <table cellspacing="0" cellpadding="0" border="0" class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;float:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
@@ -470,7 +480,7 @@
 								<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 								  <td align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
 										<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-									<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:12px;color:#555555;" >© 2018 ikwen, Inc. All Rights Reserved.</span></p>
+                                            <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:12px;color:#555555;" >© {{ year }} <a href="http://ikwen.com">ikwen, Inc.</a> {% trans "All Rights Reserved." %}</span></p>
 					<!--
 										  <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555555;font-size:12px;" ><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-style:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;orphans:2;text-align:center;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;-webkit-text-stroke-width:0px;float:none;display:inline !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >You're opinion matters! Let us know how we're doing in this <a href="http:www.ikwen.com/survey" target="_blank" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;text-decoration:none;color:#4834d4;" >1-minute survey</a></strong>.</span></span></p> 
 					-->
@@ -495,4 +505,5 @@
 	  		</tr>
 		</table>
 	</body>
+    {% endwith %}
 </html>

@@ -1,3 +1,4 @@
+{% load i18n static %}
 <!doctype html>
 <html style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margin-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important;padding-left:0 !important;height:100% !important;width:100% !important;" >
 	<head style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
@@ -7,7 +8,7 @@
 		<!-- Forcing initial-scale shouldn't be necessary -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 		<!-- Use the latest (edge) version of IE rendering engine -->
-		<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >Claim your Reward</title>
+		<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ title }}</title>
 		<!-- The title tag shows in email notifications, like Android 4.4. -->
 
 
@@ -222,6 +223,7 @@
 		}
 		</style>
 	</head>
+    {% with project_name=service.project_name company_name=config.company_name site_url=service.url %}
 	<body width="100%" bgcolor="#e0e0e0"  yahoo="yahoo" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margin-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important;padding-left:0 !important;height:100% !important;width:100% !important;" >
 		<table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" bgcolor="#e0e0e0" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-collapse:separate !important;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;table-layout:fixed !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;" >
 	  		<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
@@ -229,8 +231,7 @@
 					<center style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:100%;" >
 
 				<!-- Visually Hidden Preheader Text : BEGIN -->
-						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >1 achat = 1 cadeau avec votre profil ikwen ! 
-						</div>
+						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >{{ title }}</div>
 				<!-- Visually Hidden Preheader Text : END -->
 
 						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;box-shadow:0 5px 5px 0 #bfbfbf;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" > 
@@ -246,9 +247,6 @@
 
 				  <!-- Email Body : BEGIN -->
 				  		<table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-
-
-
 					<!-- Text with Background band : BEGIN -->
 							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 							  <td bgcolor="#233682" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:center;background-position:center !important;background-size:cover !important;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
@@ -266,7 +264,11 @@
 												<![endif]-->
 										<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 											<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-												<td class="mobil-font-size" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:left;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;font-size:30px;mso-height-rule:exactly;line-height:35px;color:#ffffff;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" > Vous avez gagné <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#f28632;" >{{coupon_count}} coupons {{project_name}}</span></td>
+												<td class="mobil-font-size" valign="middle" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-align:left;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;font-size:30px;mso-height-rule:exactly;line-height:35px;color:#ffffff;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+                                                    {% blocktrans %}
+                                                    You just won <span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#f28632;" >{{coupon_count}} coupons {{project_name}}</span>
+                                                    {% endblocktrans %}
+                                                </td>
 											</tr>
 										</table>
 									  <!--[if (gte mso 9)|(IE)]>
@@ -320,7 +322,7 @@
 											<td dir="ltr"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;ont-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;font-size:18px;mso-height-rule:exactly;line-height:20px;color:#555555;padding-top:10px;padding-bottom:0;padding-right:10px;padding-left:10px;text-align:justify;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#111111;" >Communauté {{ project_name }}</strong> <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  Cher {{ buyer_name }}, <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											  Suite à votre achat en ligne sur <a href="http://www.tchopetyamo.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:none;" >{{ site_url }}</a>, vous avez gagné {{ coupon_count}} coupons. Collectionnez en 100 pour les échanger chez {{ project_name }} contre le lot équivalent. Cliquez sur vos cadeaux pour les récupérer !<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+											  Suite à votre achat en ligne sur <a href="http://www.tchopetyamo.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;text-decoration:none;" >{{ site_url }}</a>, vous avez gagné {{ coupon_count}} coupons. Collectionnez-en 100 pour les échanger chez {{ project_name }} contre le lot équivalent. Cliquez sur vos cadeaux pour les récupérer !<br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											  <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 
@@ -594,4 +596,5 @@
 	  		</tr>
 		</table>
 	</body>
+    {% endwith %}
 </html>
