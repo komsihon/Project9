@@ -8,13 +8,13 @@
 		<!-- Forcing initial-scale shouldn't be necessary -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 		<!-- Use the latest (edge) version of IE rendering engine -->
-		<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ title }}</title>
+		<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "Claim your reward!" %}</title>
 		<!-- The title tag shows in email notifications, like Android 4.4. -->
 
 
 	<!-- CSS Reset -->
 		<style type="text/css" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-		
+		 
 
 			html, body {
 				margin: 0 !important;
@@ -179,6 +179,10 @@
 			background: #f28632 !important;
 			border-color: #f28632 !important;
 		}
+		
+		.screen-display{
+			margin-top: 10px !important;
+		}
 
 		
 		@media screen and (max-width: 480px) {
@@ -220,6 +224,15 @@
 		table.center-on-narrow {
 			display: inline-block !important;
 		}
+		.screen-display{
+			margin-top: 0 !important;
+		}
+		}
+		
+		@media screen and (max-width: 767px) and (orientation: landscape){
+		.screen-display{
+			margin-top: 0 !important;
+		}
 		}
 		</style>
 	</head>
@@ -234,7 +247,7 @@
 						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >{{ title }}</div>
 				<!-- Visually Hidden Preheader Text : END -->
 
-						<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;box-shadow:0 5px 5px 0 #bfbfbf;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" > 
+						<div class="screen-display" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;box-shadow:0 5px 5px 0 #bfbfbf;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;margin-top:10px !important;" > 
 				  <!--[if (gte mso 9)|(IE)]>
 					<table cellspacing="0" cellpadding="0" border="0" width="680" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;table-layout:fixed !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;" >
 					<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
@@ -242,8 +255,16 @@
 					<![endif]-->
 							
 				  <!-- Email Header : BEGIN -->
-				  
-				  <!-- Email Header : END -->
+				  <table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#F3F3F3" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
+						<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+							<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
+							<div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:100%;margin-top:auto;margin-bottom:auto;margin-right:auto;margin-left:auto;padding-top:15px;padding-bottom:5px;padding-right:0;padding-left:0;text-align:left;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#EEEEEE;" >
+								<a href="http://www.ikwen.com" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><img src="{% static 'rewarding/img/New-logo-ikwen-mail_200x49.png' %}" width="100" height="auto" alt="ikwen website" border="0" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-left:20px;-ms-interpolation-mode:bicubic;" ></a>
+							</div>				
+							</td>
+						</tr>
+						</table>
+						<!-- Email Header : END -->
 
 				  <!-- Email Body : BEGIN -->
 				  		<table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-collapse:separate !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
