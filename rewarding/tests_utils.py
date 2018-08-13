@@ -83,20 +83,24 @@ class RewardingUtilsTestCase(unittest.TestCase):
         cumul = CumulatedCoupon.objects.using(UMBRELLA).get(member=member, coupon=coupon)
         self.assertEqual(cumul.count, 25)
 
-    @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
+    @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102', UNIT_TESTING=True)
     def test_donate_coupon(self):
-        member = Member.objects.using(UMBRELLA).get(username='member3')
+        donor = Member.objects.using(UMBRELLA).get(username='member3')
+        receiver = Member.objects.using(UMBRELLA).get(username='member4')
         coupon = Coupon.objects.using(UMBRELLA).get(pk='593928184fc0c279dc0f73b1')
         count = 10
         # use_coupon raises a CumulatedCoupon.DoesNotExist error if Member does not have that coupon
-        self.assertRaises(CumulatedCoupon.DoesNotExist, donate_coupon, member, coupon, 10, 'obj_id')
+        self.assertRaises(CumulatedCoupon.DoesNotExist, donate_coupon, donor, receiver, coupon, 10, 'obj_id')
 
-        CumulatedCoupon.objects.using(UMBRELLA).create(member=member, coupon=coupon, count=30)
+        CumulatedCoupon.objects.using(UMBRELLA).create(member=donor, coupon=coupon, count=30)
         # use_coupon raises a ValueError
-        self.assertRaises(ValueError, donate_coupon, member, coupon, 40, 'obj_id')
+        self.assertRaises(ValueError, donate_coupon, donor, receiver, coupon, 40, 'obj_id')
 
-        donate_coupon(member, coupon, count, 'obj_id')
-        CouponUse.objects.using(UMBRELLA).get(member=member, coupon=coupon,
+        donate_coupon(donor, receiver, coupon, count, 'obj_id')
+        CouponUse.objects.using(UMBRELLA).get(member=donor, coupon=coupon,
                                               usage=CouponUse.DONATION, count=count)
-        cumul = CumulatedCoupon.objects.using(UMBRELLA).get(member=member, coupon=coupon)
-        self.assertEqual(cumul.count, 20)
+        donor_cumul = CumulatedCoupon.objects.using(UMBRELLA).get(member=donor, coupon=coupon)
+        self.assertEqual(donor_cumul.count, 20)
+
+        receiver_cumul = CumulatedCoupon.objects.using(UMBRELLA).get(member=receiver, coupon=coupon)
+        self.assertEqual(receiver_cumul.count, 10)

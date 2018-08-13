@@ -1,5 +1,5 @@
 {% extends "core/app_base_admin.html" %}
-{% load i18n humanize staticfiles auth_tokens admin_list %}
+{% load i18n humanize static admin_list %}
 
 {% block page_title %}
 <title> {% trans "Continuous Rewarding" %} - ikwen </title>
@@ -8,7 +8,13 @@
 {% block head_style %}
     {{ block.super }}
     <link href="{% static 'ikwen/css/uploader-single.css' %}" media="screen" rel="stylesheet" type="text/css" />
-    <link href="{% static 'ikwen/css/rewarding.css' %}" media="screen" rel="stylesheet" type="text/css" />
+    <link rel='stylesheet' href="{% static 'ikwen/swiper/css/swiper.min.css' %}" />
+    <link href="{% static 'rewarding/css/rewarding.css' %}" media="screen" rel="stylesheet" type="text/css" />
+    <style>
+        @media (min-width: 768px) {
+            .about-cr {margin-top: 60px}
+        }
+    </style>
 {% endblock %}
 
 {% block head_js %}
@@ -24,251 +30,530 @@
 {% block admin_content %}
     <div id="admin-content">
         <div class="container-fluid">
-            <form id="cr-plan" class="subtle-shade section">
-                <h4>{% trans "Billing Plan" %}</h4>
-                <div class="col-sm-4">
-                    <div class="current-plan">
-                        <div class="form-group">
-                            <label for="current-plan">{% trans "Your plan" %}</label>
-                            <select id="current-plan" name="plan_id" class="form-control input-sm">
-                                <option>CR 500</option>
-                                <option>CR 1000</option>
-                            </select>
+            {% if cr_profile %}
+                <form id="cr-plan" class="section subtle-shade" method="post" action="?action=save_billing">{% csrf_token %}
+                    <h4>{% trans "Billing" %}</h4>
+                    {% if cr_profile.plan.slug == 'free-test' %}
+                        <div class="coupons-directions">
+                            <p>{% blocktrans %}
+                                You are using the Free Plan that is limited to 500 customer revivals per month.
+                                Activate Pro Plan and move to 2000 and more.
+                            {% endblocktrans %}</p>
+                            <button type="button" class="btn btn-success show-change-plan">{% trans "Activate Pro Plan" %}</button>
                         </div>
-                        <div class="checkbox text-muted">
-                            <label>
-                                <input type="checkbox" name="sms_push"> {% blocktrans %}<strong>SMS Push</strong> (Your customers will also be notified by SMS){% endblocktrans %}
-                            </label>
-                        </div>
-                        <div class="plan-details text-muted">
-                            <p>
-                                <strong>Monthly cost</strong>
-                                <span>10 000</span>
-                            </p>
-                            <p>
-                                <strong>People hit</strong>
-                                <span>Up to 500</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" name="auto_renew"> {% blocktrans %}<strong>Auto renew</strong>{% endblocktrans %}
-                        </label>
-                    </div>
+                    {% endif %}
+                    {% with plan=cr_profile.plan %}
                     <div>
-                        <strong>{% trans "Expiry" %}:</strong>
-                        <span class="text-muted">2018-05-22</span>
-                    </div>
-                </div>
-                <div class="pull-right col-xs-6 col-sm-3 col-lg-2" style="clear: both">
-                    <button class="btn btn-primary btn-sm btn-block">{% trans "Save" %}</button>
-                </div>
-                <div class="clearfix"></div>
-            </form>
-            <div id="cr-cards" class="section subtle-shade">
-                <h4>{% trans "Cards" %}</h4>
-                <div>
-                    <div class="card-group col-sm-6">
-                        <h5 class="title">{% trans "Discount" %}</h5>
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
+                        <div class="current-plan col-sm-4">
+                            <p>
+                                <strong>{% trans "Current Plan" %}: </strong>
+                                <span>{{ plan.name }}</span>
+                                <a href="javascript:;" class="show-change-plan pull-right">{% trans "Change" %}</a>
+                            </p>
+                            <p>
+                                <strong>{% trans "Expiry" %}:</strong>
+                                <span class="text-muted">{{ cr_profile.expiry|date }}</span>
+                            </p>
+                            <p>
+                                <strong>{% trans "Monthly Cost" %}:</strong>
+                                <span class="text-muted">XAF {{ cr_profile.monthly_cost|intcomma }}</span>
+                            </p>
+                            <p>
+                                <strong>{% trans "People hit" %}:</strong>
+                                <span class="text-muted">{% blocktrans with size=plan.audience_size %}
+                                    Up to {{ size }}
+                                {% endblocktrans %}</span>
+                            </p>
+                            <div>
+                                <p>
+                                    <strong>{% trans "SMS Push" %}:</strong>
+                                    {% if cr_profile.sms %}
+                                        <span class="text-success">ON</span>
+                                    {% else %}
+                                        <span class="text-danger">OFF</span> -
+                                        <a href="javascript:;" class="show-change-plan">Activate</a>
+                                    {% endif %}
+                                </p>
+                                <p class="text-muted" style="margin-top: -10px; font-style: italic">
+                                    {% trans "If SMS is active, your customer will also receive reward notice by SMS" %}
+                                </p>
                             </div>
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
+                            <p>
+                                <strong>{% trans "Auto-renew" %}:</strong>
+                                {% if cr_profile.auto_renew %}
+                                    <span class="text-success">ON</span>
+                                {% else %}
+                                    <span class="text-danger">OFF</span> -
+                                    <a href="javascript:;" class="show-change-plan">Activate</a>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="change-plan" style="display: none">
+                            <div class="col-sm-4">
+                                <a href="javascript:;" class="pull-right show-current-plan">Cancel</a>
+                                <div class="form-group">
+                                    <label for="current-plan">{% trans "Your plan" %}</label>
+                                    <select id="current-plan" name="plan_id" class="form-control input-sm">
+                                        {% for item in plan_list %}
+                                            <option value="{{ item.id }}" data-sms-cost="{{ item.sms_monthly_cost }}"
+                                                    {% if plan.id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="plan-details text-muted">
+                                    <p>
+                                        <strong>{% trans "Monthly cost" %}:</strong>
+                                        <span class="monthly-cost">{{ plan.raw_monthly_cost|intcomma }}</span>
+                                    </p>
+                                    <p>
+                                        <strong>{% trans "People hit" %}:</strong>
+                                        <span class="message-sent">{% blocktrans with size=plan.audience_size %}
+                                            Up to {{ size }}
+                                        {% endblocktrans %}</span>
+                                    </p>
+                                </div>
+                                <div class="checkbox text-muted">
+                                    <label>
+                                        <input type="checkbox" name="sms_push" {% if cr_profile.sms %}checked{% endif %}>
+                                        <strong>SMS Push</strong>
+                                    </label>
+                                    <p>{% trans "Your customers will also receive reward notice by SMS" %}</p>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="auto_renew" {% if cr_profile.auto_renew %}checked{% endif %}>
+                                        {% blocktrans %}<strong>Auto renew</strong>{% endblocktrans %}
+                                    </label>
+                                </div>
+                                <div class="clearfix"></div>
                             </div>
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
+                            <div class="pull-right col-xs-6 col-sm-3 col-lg-2" style="clear: both">
+                                <button class="btn btn-primary btn-sm btn-block">{% trans "Save" %}</button>
                             </div>
                         </div>
+                        <div class="clearfix"></div>
                     </div>
-                    <div class="card-group col-sm-6">
-                        <h5 class="title">{% trans "Purchase Order" %}</h5>
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
+                    {% endwith %}
+                </form>
+                <div id="coupons" class="section subtle-shade">
+                    <h4>{% trans "Coupons" %}</h4>
+                    {% if dc_coupon_list or po_coupon_list or gift_coupon_list %}
+                    <div>
+                        {% if dc_coupon_list %}
+                        <div class="coupon-group swiper-container">
+                            <h5 class="title">{% trans "Discount" %}</h5>
+                            <ul class="coupon-list swiper-wrapper">
+                                {% for coupon in dc_coupon_list %}
+                                <li class="swiper-slide coupon {{ coupon.status }}" id="{{ coupon.id }}" data-id="{{ coupon.id }}" data-model-name="rewarding.Coupon">
+                                    <a href="{% url 'rewarding:change_coupon' coupon.id %}">
+                                        <img src="{{ settings.IKWEN_MEDIA_URL }}{{ coupon.image.name }}" />
+                                    </a>
+                                    <p class="coupon-name">
+                                        <i class="fa fa-circle attention text-warning" title="{% trans "Pending for approval" %}"></i>
+                                        <i class="fa fa-circle attention text-danger" title="{% trans "Rejected" %}"></i>
+                                        <a href="{% url 'rewarding:change_coupon' coupon.id %}">
+                                            {{ coupon.name }}
+                                        </a>
+                                    </p>
+                                    <div class="actions">
+                                        <i class="action glyphicon glyphicon-trash trash" title="{% trans "Delete Coupon" %}"></i>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="swiper-button-next has-shade">
+                                <i class="fa fa-angle-right"></i>
                             </div>
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
+                            <div class="swiper-button-prev has-shade">
+                                <i class="fa fa-angle-left"></i>
                             </div>
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
+                            <div class="clearfix"></div>
+                        </div>
+                        {% endif %}
+                        {% if po_coupon_list %}
+                        <div class="coupon-group swiper-container">
+                            <h5 class="title">{% trans "Purchase Order" %}</h5>
+                            <ul class="swiper-wrapper coupon-list">
+                                {% for coupon in po_coupon_list %}
+                                <li class="swiper-slide coupon {{ coupon.status }}" id="{{ coupon.id }}" data-id="{{ coupon.id }}" data-model-name="rewarding.Coupon">
+                                    <a href="{% url 'rewarding:change_coupon' coupon.id %}">
+                                        <img src="{{ settings.IKWEN_MEDIA_URL }}{{ coupon.image.name }}" />
+                                    </a>
+                                    <p class="coupon-name">
+                                        <i class="fa fa-circle attention text-warning" title="{% trans "Pending for approval" %}"></i>
+                                        <i class="fa fa-circle attention text-danger" title="{% trans "Rejected" %}"></i>
+                                        <a href="{% url 'rewarding:change_coupon' coupon.id %}">
+                                            {{ coupon.name }}
+                                        </a>
+                                    </p>
+                                    <div class="actions">
+                                        <i class="action glyphicon glyphicon-trash trash" title="{% trans "Delete Coupon" %}"></i>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="swiper-button-next has-shade">
+                                <i class="fa fa-angle-right"></i>
                             </div>
+                            <div class="swiper-button-prev has-shade">
+                                <i class="fa fa-angle-left"></i>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        {% endif %}
+                        {% if gift_coupon_list %}
+                        <div class="swiper-container coupon-group">
+                            <h5 class="title">{% trans "Gift" %}</h5>
+                            <ul class="swiper-wrapper coupon-list">
+                                {% for coupon in gift_coupon_list %}
+                                <li class="swiper-slide coupon {{ coupon.status }}" id="{{ coupon.id }}" data-id="{{ coupon.id }}" data-model-name="rewarding.Coupon">
+                                    <a href="{% url 'rewarding:change_coupon' coupon.id %}">
+                                        <img src="{{ settings.IKWEN_MEDIA_URL }}{{ coupon.image.name }}" />
+                                    </a>
+                                    <p class="coupon-name">
+                                        <i class="fa fa-circle attention text-warning" title="{% trans "Pending for approval" %}"></i>
+                                        <i class="fa fa-circle attention text-danger" title="{% trans "Rejected" %}"></i>
+                                        <a href="{% url 'rewarding:change_coupon' coupon.id %}">
+                                            {{ coupon.name }}
+                                        </a>
+                                    </p>
+                                    <div class="actions">
+                                        <i class="action glyphicon glyphicon-trash trash" title="{% trans "Delete Coupon" %}"></i>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="swiper-button-next has-shade">
+                                <i class="fa fa-angle-right"></i>
+                            </div>
+                            <div class="swiper-button-prev has-shade">
+                                <i class="fa fa-angle-left"></i>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                        <div class="coupons-directions">
+                            <p>{% blocktrans %}
+                                Coupon are rewards that your fans and customers must collect to get a
+                                real advantage from you. There are 3 types of coupons you can create:
+                            {% endblocktrans %}</p>
+                            <ul>{% blocktrans %}
+                                <li>Discount (Eg: -5%, -10%, etc.)</li>
+                                <li>Gift (Whatever item you are selling. Eg: A T-Shirt, A lotion, etc.)</li>
+                                <li>Purchase Order (An amount to be spent in your store)</li>
+                            {% endblocktrans %}</ul>
+                            <p>{% blocktrans %}
+                                Read more about coupons on
+                                <a href="http://support.ikwen.com/rewarding/coupons">http://support.ikwen.com/rewarding/coupons</a>
+                            {% endblocktrans %}</p>
+                        </div>
+                    {% endif %}
+                    <div style="clear: both">
+                        <div class="col-xs-6 col-sm-3 col-sm-offset-6 col-lg-2 pull-right">
+                            <a href="{% url 'rewarding:change_coupon' %}"
+                               class="btn btn-primary btn-sm btn-block"
+                               title="{% trans "Add new coupon" %}">{% trans "Add" %}</a>
                         </div>
                     </div>
-                    <div class="card-group col-sm-6">
-                        <h5 class="title">{% trans "Gift" %}</h5>
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="cr-card"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="clearfix"></div>
                 </div>
-                <div style="clear: both">
-                    <div class="col-xs-6 col-sm-3 col-sm-offset-6 col-lg-offset-8 col-lg-2">
-                        <a href="{% url 'rewarding:change_coupon' %}"
-                           class="btn btn-success btn-sm btn-block"
-                           title="{% trans "Add new coupon" %}">{% trans "Add" %}</a>
+                <div id="reward-packs" class="section subtle-shade">
+                <h4>{% trans "Rewards" %}</h4>
+                <div class="col-xs-12">
+                    <div class="nav nav-tabs" role="tablist">
+                        <div role="presentation" class="tab active join-reward" data-tab="join-reward">
+                            <a href="#join-reward" aria-controls="join-reward" role="tab" data-toggle="tab">
+                                <i class="fa fa-circle attention text-danger"></i>
+                                {% trans "Join Reward" %}
+                            </a>
+                        </div>
+                        <div role="presentation" class="tab payment-reward" data-tab="payment-reward">
+                            <a href="#payment-reward" aria-controls="payment-reward" role="tab" data-toggle="tab">
+                                <i class="fa fa-circle attention text-danger"></i>
+                                {% trans "Payment Reward" %}
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-xs-6 col-sm-3 col-lg-2">
-                        <button class="btn btn-primary btn-sm btn-block"
-                                title="{% trans "Submit for approval" %}">{% trans "Submit" %}</button>
+                    <div class="tab-content">
+                        {% if error %}<p class="alert alert-danger">{{ error }}</p>{% endif %}
+                        <div id="join-reward" class="tab-pane active" role="tabpanel">
+                            <p class="coupons-directions">{% blocktrans %}
+                                Configure how many of each coupon members earn
+                                for joining your community.
+                                <a href="http://support.ikwen.com/rewarding/join-reward">Read more</a>
+                            {% endblocktrans %}</p>
+                            <div>
+                                {% if dc_coupon_list %}
+                                <div class="coupon-group col-sm-6">
+                                    <h5 class="title">{% trans "Discount" %}</h5>
+                                    <div>
+                                        {% for coupon in dc_coupon_list %}
+                                            <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
+                                                <div class="col-xs-4 col-sm-8">
+                                                    <input id="{{ coupon.slug }}" type="number" value="{{ coupon.join_reward_pack.count }}" class="form-control input-sm" />
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if po_coupon_list %}
+                                <div class="coupon-group col-sm-6">
+                                    <h5 class="title">{% trans "Purchase Order" %}</h5>
+                                    <div>
+                                        {% for coupon in po_coupon_list %}
+                                            <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
+                                                <div class="col-xs-4 col-sm-8">
+                                                    <input id="{{ coupon.slug }}" type="number" value="{{ coupon.join_reward_pack.count }}" class="form-control input-sm" />
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if gift_coupon_list %}
+                                <div class="coupon-group col-sm-6">
+                                    <h5 class="title">{% trans "Gift" %}</h5>
+                                    <div>
+                                        {% for coupon in gift_coupon_list %}
+                                            <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
+                                                <div class="col-xs-4 col-sm-8">
+                                                    <input id="{{ coupon.slug }}" type="number" value="{{ coupon.join_reward_pack.count }}" class="form-control input-sm" />
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="pull-right col-xs-6 col-sm-3 col-lg-2" style="clear: both">
+                                <button class="btn btn-primary btn-sm btn-block save-reward-packs">{% trans "Save" %}</button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="payment-reward" class="tab-pane" role="tabpanel">
+                            <p class="coupons-directions" style="margin-bottom: 30px">{% blocktrans %}
+                                Configure how many of each coupon members earn when
+                                they buy a certain amount from you, be it online or cash.
+                                <a href="http://support.ikwen.com/rewarding/payment-reward">Read more</a>
+                            {% endblocktrans %}</p>
+                            <div style="clear: both">
+                                {% for interval in payment_interval_list %}
+                                <div class="interval active">
+                                    <div class="bounds">
+                                        <div class="label label-success">
+                                            <strong>{{ CURRENCY.symbol }}</strong>
+                                            <span class="floor" data-val="{{ interval.floor }}">{{ interval.floor }}</span> -
+                                            <span class="ceiling" data-val="{{ interval.ceiling }}">{{ interval.ceiling }}</span>
+                                        </div>
+                                        <a href="javascript:;" class="show-edit-bounds">{% trans "Edit" %}</a>
+                                    </div>
+                                    <div class="edit-bounds row">
+                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2">
+                                            <input type="number" class="form-control input-sm floor" placeholder="{% trans "From" %}" />
+                                        </div>
+                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2" style="padding-left: 0">
+                                            <input type="number" class="form-control input-sm ceiling" placeholder="{% trans "To" %}" />
+                                        </div>
+                                        <div class="form-group col-xs-2 col-sm-2 col-lg-1" style="padding-left: 0">
+                                            <button type="button" class="btn btn-sm btn-success btn-block save-bounds">{% trans "OK" %}</button>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="reward-pack">
+                                        {% if interval.dc_coupon_list %}
+                                        <div class="coupon-group col-sm-6">
+                                            <h5 class="title">{% trans "Discount" %}</h5>
+                                            <div>
+                                                {% for coupon in interval.dc_coupon_list %}
+                                                    <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                        <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-3 col-md-2">{{ coupon.name }}</label>
+                                                        <div class="col-xs-4">
+                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="{{ coupon.payment_reward.count }}" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% if interval.po_coupon_list %}
+                                        <div class="coupon-group col-sm-6">
+                                            <h5 class="title">{% trans "Purchase Order" %}</h5>
+                                            <div>
+                                                {% for coupon in po_coupon_list %}
+                                                    <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                        <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-3 col-md-2">{{ coupon.name }}</label>
+                                                        <div class="col-xs-4">
+                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="10" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% if interval.gift_coupon_list %}
+                                        <div class="coupon-group col-sm-6">
+                                            <h5 class="title">{% trans "Gift" %}</h5>
+                                            <div>
+                                                {% for coupon in gift_coupon_list %}
+                                                    <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                        <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-3 col-md-2">{{ coupon.name }}</label>
+                                                        <div class="col-xs-4">
+                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="10" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="divider"></div>
+                                </div>
+                                {% endfor %}
+                                <div class="interval collapsed tpl">
+                                    <div class="bounds" style="display: none">
+                                        <div class="label label-success">
+                                            <strong>{{ CURRENCY.symbol }}</strong>
+                                            <span class="floor"></span> -
+                                            <span class="ceiling"></span>
+                                        </div>
+                                        <a href="javascript:;" class="show-edit-bounds">{% trans "Edit" %}</a>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="edit-bounds row" style="display: block">
+                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2">
+                                            <input type="number" class="form-control input-sm floor" placeholder="{% trans "From" %}" />
+                                        </div>
+                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2" style="padding-left: 0">
+                                            <input type="number" class="form-control input-sm ceiling" placeholder="{% trans "To" %}" />
+                                        </div>
+                                        <div class="form-group col-xs-2 col-sm-2 col-lg-1" style="padding-left: 0">
+                                            <button type="button" class="btn btn-sm btn-success btn-block save-bounds">{% trans "OK" %}</button>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="reward-pack">
+                                        {% if dc_coupon_list %}
+                                        <div class="coupon-group col-sm-6">
+                                            <h5 class="title">{% trans "Discount" %}</h5>
+                                            <div>
+                                                {% for coupon in dc_coupon_list %}
+                                                    <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                        <label class="col-xs-8 col-sm-4 col-md-3">{{ coupon.name }}</label>
+                                                        <div class="col-xs-4 col-sm-5">
+                                                            <input type="number" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% if po_coupon_list %}
+                                        <div class="coupon-group col-sm-6">
+                                            <h5 class="title">{% trans "Purchase Order" %}</h5>
+                                            <div>
+                                                {% for coupon in po_coupon_list %}
+                                                    <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                        <label class="col-xs-8 col-sm-4 col-md-3">{{ coupon.name }}</label>
+                                                        <div class="col-xs-4 col-sm-5">
+                                                            <input type="number" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% if gift_coupon_list %}
+                                        <div class="coupon-group col-sm-6">
+                                            <h5 class="title">{% trans "Gift" %}</h5>
+                                            <div>
+                                                {% for coupon in gift_coupon_list %}
+                                                    <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                        <label class="col-xs-8 col-sm-4 col-md-3">{{ coupon.name }}</label>
+                                                        <div class="col-xs-4 col-sm-5">
+                                                            <input type="number" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="divider"></div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div style="clear: both">
+                                <div class="col-xs-6 col-sm-3 col-sm-offset-6 col-lg-offset-8 col-lg-2">
+                                    <button class="btn btn-success btn-sm btn-block add-interval">
+                                        <i class="fa fa-plus"></i>
+                                        {% trans "Add interval" %}
+                                    </button>
+                                </div>
+                                <div class="col-xs-6 col-sm-3 col-lg-2">
+                                    <button class="btn btn-primary btn-sm btn-block save-reward-packs">{% trans "Save" %}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <div id="cr-offers" class="section subtle-shade">
-                <h4>{% trans "Rewards" %}</h4>
-                <div class="col-xs-12">
-                    <div class="nav nav-tabs" role="tablist">
-                        <div role="presentation" class="tab" data-tab="join-reward">
-                            <a href="#join-reward" aria-controls="join-reward" role="tab" data-toggle="tab">{% trans "Join Reward" %}</a>
+            {% else %}
+                <div class="about-cr">
+                    <div class="col-sm-6">
+                        <img src="{% static 'rewarding/img/CR_intro.png' %}" class="img-responsive" />
+                    </div>
+                    <div class="col-sm-6">
+                        <div style="margin-bottom: 30px">
+                            <h3>{% trans "Continuous Rewarding" %}</h3>
+                            <p>
+                                Continuous rewarding is an automated system that lets you attract customers
+                                and keep them engaged by continuously offering them free coupons.
+                                They need to collect 100 of any coupon to obtain the gift stated by
+                                the Coupon.
+                            </p>
+                            <p>
+                                Visit <a href="http://blog.ikwen.com/continuous-rewarding">blog.ikwen.com/continuous-rewarding</a>
+                                to know more.
+                            </p>
                         </div>
-                        <div role="presentation" class="tab active" data-tab="purchase-reward">
-                            <a href="#purchase-reward" aria-controls="purchase-reward" role="tab" data-toggle="tab">{% trans "Purchase Reward" %}</a>
+                        <button class="btn btn-success" data-toggle="modal"
+                                data-target="#cr-terms-prompt" style="min-width: 200px">{% trans "Get Started" %}</button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="modal fade" id="cr-terms-prompt" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-info">
+                <div class="modal-body">
+                    <p class="col-xs-12" style="margin: 1em 0">
+                        {% blocktrans %}
+                            By activating this program, you agree our
+                            <a href="http://ikwen.com/cr-terms-and-conditions">Continuous Rewarding Terms and Conditions</a>.
+                        {% endblocktrans %}
+                    </p>
+                    <div class="actions">
+                        <div class="col-xs-12 col-sm-4 col-md-3 pull-right action">
+                            <a href="?action=activate" class="btn btn-success btn-sm btn-block">{% trans "Activate" %}</a>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-3 pull-right action">
+                            <button class="btn btn-default btn-sm btn-block"
+                                    data-dismiss="modal" aria-label="Close">{% trans "Cancel" %}</button>
                         </div>
                     </div>
-                    <form class="tab-content" method="post">{% csrf_token %}
-                        {% if error %}<p class="alert alert-danger">{{ error }}</p>{% endif %}
-                        <div id="join-reward" class="tab-pane row" role="tabpanel">
-                            <div>
-                                <div class="card-group col-sm-6">
-                                    <h5 class="title">{% trans "Discount" %}</h5>
-                                    <div>
-                                        <div class="form-group row">
-                                            <label for="card20" class="col-xs-8 col-sm-4">20%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card20" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="card30" class="col-xs-8 col-sm-4">30%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card30" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="card50" class="col-xs-8 col-sm-4">50%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card50" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-group col-sm-6">
-                                    <h5 class="title">{% trans "Purchase Order" %}</h5>
-                                    <div>
-                                        <div class="form-group row">
-                                            <label for="card20" class="col-xs-8 col-sm-4">20%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card20" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="card30" class="col-xs-8 col-sm-4">30%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card30" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="card50" class="col-xs-8 col-sm-4">50%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card50" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-group col-sm-6">
-                                    <h5 class="title">{% trans "Gift" %}</h5>
-                                    <div>
-                                        <div class="form-group row">
-                                            <label for="card20" class="col-xs-8 col-sm-4">20%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card20" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="card30" class="col-xs-8 col-sm-4">30%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card30" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="card50" class="col-xs-8 col-sm-4">50%</label>
-                                            <div class="col-xs-4 col-sm-8">
-                                                <input id="card50" type="number" value="10" class="form-control input-sm" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div id="purchase-reward" class="tab-pane active" role="tabpanel">
-                            <div class="pull-right col-xs-6 col-sm-3 col-lg-2" style="clear: both; margin-right: -15px">
-                                <button class="btn btn-success btn-sm btn-block">
-                                    <i class="fa fa-plus"></i>
-                                    {% trans "Add interval" %}
-                                </button>
-                            </div>
-                            <div style="clear: both">
-                                <fieldset class="interval">
-                                    <legend>0 - 10000  <a href="javascript:;" class="show-edit-bounds">{% trans "Edit" %}</a></legend>
-                                    <div class="edit-bounds row">
-                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2">
-                                            <input type="number" class="form-control input-sm" placeholder="{% trans "From" %}" />
-                                        </div>
-                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2">
-                                            <input type="number" class="form-control input-sm" placeholder="{% trans "To" %}" />
-                                        </div>
-                                        <div class="form-group col-xs-2 col-sm-2 col-lg-1">
-                                            <button type="button" class="btn btn-sm btn-success btn-block save-bounds">{% trans "OK" %}</button>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div>
-
-                                    </div>
-                                </fieldset>
-                                <fieldset class="interval tpl">
-                                    <legend style="display: none">
-                                        <span class="bounds"></span>
-                                        <a href="javascript:;" class="show-edit-bounds">{% trans "Edit" %}</a>
-                                    </legend>
-                                    <div class="edit-bounds row" style="display: block">
-                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2">
-                                            <input type="number" class="form-control input-sm" placeholder="{% trans "From" %}" />
-                                        </div>
-                                        <div class="form-group col-xs-5 col-sm-3 col-lg-2">
-                                            <input type="number" class="form-control input-sm" placeholder="{% trans "To" %}" />
-                                        </div>
-                                        <div class="form-group col-xs-2 col-sm-2 col-lg-1">
-                                            <button type="button" class="btn btn-sm btn-success btn-block save-bounds">{% trans "OK" %}</button>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div>
-
-                                    </div>
-                                </fieldset>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                    </form>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="pull-right col-xs-6 col-sm-3 col-lg-2" style="clear: both">
-                    <button class="btn btn-primary btn-sm btn-block">{% trans "Save" %}</button>
-                </div>
-                <div class="clearfix"></div>
             </div>
         </div>
     </div>
@@ -278,11 +563,102 @@
     {{ block.super }}
     <script type="text/javascript">
         (function() {
-            $('body').on('click', '.show-edit-bounds', function() {
-                $(this).parents('.interval').find('legend, .edit-bounds').toggle();
+            $('div#admin-nav .continuous-rewarding').addClass('active');
+            var couponSwiper = new Swiper('.swiper-container', {
+                slidesPerView: 'auto',
+                spaceBetween: 15,
+                nextButton: '.swiper-button-next',
+                prevButton: '.swiper-button-prev',
+                breakpoints: {
+                    767: {
+                        spaceBetween: 0
+                    }
+                }
+            });
+            $('body').on('click', '.show-change-plan, .show-current-plan', function() {
+                $('.current-plan, .change-plan').toggle();
+            }).on('click', '.show-edit-bounds', function() {
+                var $interval = $(this).parents('.interval'),
+                    floor = $interval.find('span.floor').data('val'),
+                    ceiling = $interval.find('span.ceiling').data('val');
+                $interval.find('input.floor').val(floor);
+                $interval.find('input.ceiling').val(ceiling);
+                $interval.find('.bounds, .edit-bounds').toggle();
             }).on('click', '.save-bounds', function() {
-                $(this).parents('.interval').find('legend, .edit-bounds').toggle();
-                {#$interval.find('.edit-bounds').show()#}
+                var $interval = $(this).parents('.interval'),
+                    $floor = $interval.find('input.floor'),
+                    $ceiling = $interval.find('input.ceiling'),
+                    floor = parseInt($floor.val()),
+                    ceiling = parseInt($ceiling.val());
+                $interval.find('input').removeClass('input-error');
+                if (isNaN(floor)) {
+                    $floor.addClass('input-error');
+                    return;
+                }
+                if (isNaN(ceiling)) {
+                    $ceiling.addClass('input-error');
+                    return;
+                }
+                $interval.find('span.floor').data('val', floor).text(floor.formatMoney());
+                $interval.find('span.ceiling').data('val', ceiling).text(ceiling.formatMoney());
+                $interval.find('.bounds, .edit-bounds').toggle();
+                $interval.addClass('active').removeClass('collapsed');
+            }).on('click', '.add-interval', function() {
+                $('.interval.tpl').clone().removeClass('tpl').insertBefore('.interval.tpl');
+            }).on('click', '.save-reward-packs', function() {
+                var join = [], payment = [], inputCorrect = true;
+                $('.tab.join-reward, .tab.payment-reward').removeClass('error');
+                $('div#join-reward .reward').each(function() {
+                    var couponId = $(this).data('coupon-id'),
+                        count = $(this).find('input').removeClass('input-error').val().trim();
+                    if (!/\d+/.test(count)) {
+                        $(this).find('input').addClass('input-error');
+                        inputCorrect = false;
+                        $('.tab.join-reward:not(.active)').addClass('error');
+                        return false;
+                    }
+                    join.push({coupon_id: couponId, count: count});
+                });
+                if (!inputCorrect) return;
+                $('div#payment-reward .interval.active').each(function() {
+                    var _$interval = $(this),
+                        rewardList = [];
+                    _$interval.find('.reward').each(function() {
+                        var couponId = $(this).data('coupon-id'),
+                            count = $(this).find('input').removeClass('input-error').val().trim();
+                        if (!/\d+/.test(count)) {
+                            $(this).find('input').addClass('input-error');
+                            inputCorrect = false;
+                            $('.tab.payment-reward:not(.active)').addClass('error');
+                            return false;
+                        }
+                        rewardList.push({coupon_id: couponId, count: count});
+                    });
+                    var interval = {
+                        floor: _$interval.find('span.floor').data('val'),
+                        ceiling: _$interval.find('span.ceiling').data('val'),
+                        reward_list: rewardList
+                    };
+                    payment.push(interval);
+                });
+                if (!inputCorrect) return;
+                $.ajax({
+                    url: '?action=save_rewards_packs',
+                    type: 'post',
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    contentType: 'application/json',
+                    data: JSON.stringify({join: join, payment: payment}),
+                    error: function() {
+                        ikwen.showFloatingNotice("Oops! Something went wrong", '', 6);
+                    },
+                    success: function(data) {
+                        if (data.error) {
+                            ikwen.showFloatingNotice(data.error, '', 6);
+                            return;
+                        }
+                        ikwen.showFloatingNotice("{% trans "Reward packs successfully saved" %}", '', 6);
+                    }
+                });
             })
         })()
     </script>

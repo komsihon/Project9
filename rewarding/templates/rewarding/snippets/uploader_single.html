@@ -1,0 +1,70 @@
+{% load i18n humanize static auth_tokens %}
+
+<section class="photos" style="width: 100%">
+    <label class="required upload-title" style="float: left; width: 100%">{% trans "Upload image" %}</label>
+    <div id="upload-container">
+        {% if image.name %}
+        <div class="image" style="background-image: url('{{ settings.IKWEN_MEDIA_URL }}{{ image.name }}')">
+        {% else %}
+        <div class="image">
+        {% endif %}
+            <span class="progress"></span>
+            <div class="uploader"></div>
+            {% include 'core/snippets/spinner.html' %}
+        </div>
+    </div>
+    <p class="help clear">
+        {% if image.name %}
+        <i id="delete-image" class="glyphicon glyphicon-trash" title="{% trans "Delete image" %}"></i>
+        {% endif %}
+        <span>{{ img_help_text }}</span>
+    </p>
+</section>
+
+<script type="text/javascript">
+    (function() {
+        $('.form-row').addClass('form-group');
+        $('.form-row input, .form-row select, .form-row textarea').addClass('form-control input-sm');
+        $('.form-row textarea').addClass('form-control input-sm');
+        {% if request.GET.success %}
+            ikwen.showFloatingNotice("{% trans "Configuration successfully saved." %}", '', 6);
+        {% endif %}
+        var uploader = new qq.FileUploader({
+            action: "{% url 'rewarding:upload_coupon_image' %}",
+            element: $('div#upload-container .uploader')[0],
+            buttonText: "{% trans "Upload image" %}",
+            multiple: false,
+            onProgress: function(id, fileName, loaded, total) {
+                var ratio = loaded / total,
+                    percent = ratio * 100;
+                $('div#upload-container .image .progress').animate({width: percent + '%'});
+                if (ratio == 1) $('div#upload-container .image .spinner').show()
+            },
+            onComplete: function(id, fileName, responseJSON) {
+                if(responseJSON.success) {
+                    var imageUrl = responseJSON.path,
+                        img = new Image();
+                    img.onload = function() {
+                        $('div#upload-container .image').css('background-color', "#fff")  // Causes the placeholder image to disappear
+                                .css('background-image', "url('" + imageUrl +"')")
+                                .find('.progress, .spinner').hide();
+                    };
+                    img.src = imageUrl;
+                    $('#image_url').val(imageUrl);
+                } else {
+                    alert("upload failed!");
+                }
+            },
+            params: {
+                'csrf_token': '{{ csrf_token }}',
+                'csrf_name': 'csrfmiddlewaretoken',
+                'csrf_xname': 'X-CSRFToken',
+                'object_id': '{{ obj.id }}'
+            }
+        });
+        $('#delete-image').click(function() {
+            $.getJSON('', {action: 'delete_image'});
+            $('div#upload-container .image').css('background-image', "url('" + '{% static 'ikwen/img/no_photo.png' %}' +"')");
+        });
+    })()
+</script>

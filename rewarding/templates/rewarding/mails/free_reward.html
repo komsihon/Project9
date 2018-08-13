@@ -8,7 +8,7 @@
 <!-- Forcing initial-scale shouldn't be necessary -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 <!-- Use the latest (edge) version of IE rendering engine -->
-<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "You have a gift on ikwen !" %}</title>
+<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{% trans "You have some free rewards on ikwen !" %}</title>
 <!-- The title tag shows in email notifications, like Android 4.4. -->
 
 
@@ -135,7 +135,7 @@ table.center-on-narrow {
     <td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><center style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:100%;" >
         
         <!-- Visually Hidden Preheader Text : BEGIN -->
-        <div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" > ikwen sent you a gift!</div>
+        <div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >{% trans "You have some free rewards on ikwen !" %}</div>
         <!-- Visually Hidden Preheader Text : END -->
         
         <div class="screenDisplay" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;background-color:#FFFFFF;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;border-top-width:4px;border-top-style:solid;border-top-color:#444444;box-shadow:0 5px 5px 0 #bfbfbf;margin-top:10px;" > 
@@ -184,7 +184,7 @@ table.center-on-narrow {
                                     <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
                                     <td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
                                     <![endif]-->
-                      
+                      {% for service, reward_list in grouped_rewards.items %}
                       <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:220px;vertical-align:top;width:100%;" >
                         <table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
@@ -192,102 +192,32 @@ table.center-on-narrow {
 									<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
 										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td colspan="2" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
+												<img src="{{ IKWEN_MEDIA_URL }}{{ service.config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
 											</td>
 											<td colspan="3" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:90%;max-width:95%;height:auto;" >{{ project_name }}</p></strong>
+												<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:90%;max-width:95%;height:auto;" >{{ service.project_name }}</p></strong>
 											</td>
 										</tr>
+                                        {% with reward=reward_list.0 %}
 										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td colspan="5" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
+												<img src="{{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
 											</td>
 										</tr>
 										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 											<td colspan="5" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
 												<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;" >
-													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#8F8F8F;" >X</span><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:20px;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ coupon_count }}</strong></span>
+													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#8F8F8F;" >X</span><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:20px;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ reward.count }}</strong></span>
 												</p>
 											</td>
 										</tr>
+                                        {% endwith %}
 									</table>
 								</td>
 							</tr>
                         </table>
                       </div>
-                      
-                      <!--[if mso]>
-                                    </td>
-                                    <td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-                                    <![endif]-->
-                      
-                      <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:220px;vertical-align:top;width:100%;" >
-                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-								<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:10px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-									<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="2" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-											<td colspan="3" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:90%;max-width:95%;height:auto;" >{{ project_name }}</p></strong>
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;" >
-													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#8F8F8F;" >X</span><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:20px;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ coupon_count }}</strong></span>
-												</p>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-                        </table>
-                      </div>
-                      
-                      <!--[if mso]>
-                                    </td>
-                                    <td align="left" valign="top" width="220" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-                                    <![endif]-->
-                      
-                      <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:220px;vertical-align:top;width:100%;" >
-                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-								<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:10px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-									<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="2" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-											<td colspan="3" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:90%;max-width:95%;height:auto;" >{{ project_name }}</p></strong>
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;" >
-													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#8F8F8F;" >X</span><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:20px;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ coupon_count }}</strong></span>
-												</p>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-                        </table>
-                      </div>
-                      
+                      {% endfor %}
                       <!--[if mso]>
                                     </td>
 
@@ -303,108 +233,9 @@ table.center-on-narrow {
                         </table>
                         <![endif]--></td>
             </tr>
-            <!-- Three Even Columns : END --> 
-			  
-			<!-- Two Even Columns : BEGIN -->
-            <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-              <td bgcolor="#ffffff" align="center" height="100%" valign="top" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
-                        <table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-                        <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-                        <td align="center" valign="top" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-                        <![endif]-->
-                
-                <table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:660px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-                  <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-                    <td align="center" valign="top" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:0;padding-top:10px;padding-bottom:10px;padding-right:0;padding-left:0;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
-                                    <table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-                                    <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-                                    <td align="left" valign="top" width="330" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-                                    <![endif]-->
-                      
-                      <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:220px;vertical-align:top;width:100%;" >
-                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-								<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:10px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-									<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="2" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-											<td colspan="3" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:90%;max-width:95%;height:auto;" >{{ project_name }}</p></strong>
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;" >
-													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#8F8F8F;" >X</span><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:20px;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ coupon_count }}</strong></span>
-												</p>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-                        </table>
-                      </div>
-                      
-                      <!--[if mso]>
-                                    </td>
-                                    <td align="left" valign="top" width="330" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-                                    <![endif]-->
-                      
-                      <div  class="stack-column" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:inline-block;margin-top:0;margin-bottom:0;margin-right:-2px;margin-left:-2px;max-width:33.33%;min-width:220px;vertical-align:top;width:100%;" >
-                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-							<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-								<td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:10px;padding-bottom:10px;padding-right:10px;padding-left:10px;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-									<table cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:14px;text-align:left;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="2" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-											<td colspan="3" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" ><p  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:90%;max-width:95%;height:auto;" >{{ project_name }}</p></strong>
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<img src="{{ IKWEN_MEDIA_URL }}{{ config.logo.name }}" width="200" alt="community_icon"  class="center-on-narrow" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;border-width:0;width:100%;max-width:90%;height:auto;-ms-interpolation-mode:bicubic;" >
-											</td>
-										</tr>
-										<tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
-											<td colspan="5" align="center" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" >
-												<p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;" >
-													<span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#8F8F8F;" >X</span><span style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:20px;" ><strong style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ coupon_count }}</strong></span>
-												</p>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-                        </table>
-                      </div>
-                      
-                      <!--[if mso]>
-                                    </td>
-                                    </tr>
-                                    </table>
-                                    <![endif]--></td>
-                  </tr>
-                </table>
-                
-                <!--[if mso]>
-                        </td>
-                        </tr>
-                        </table>
-                        <![endif]--></td>
-            </tr>
-            <!-- Two Even Columns : END --> 
-            
+            <!-- Three Even Columns : END -->
             <!-- Thumbnail Left, Text Right : BEGIN -->
+            {% if app %}
             <tr style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
               <td dir="ltr" bgcolor="#F3F3F3" align="center" height="100%" valign="top" width="100%" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;padding-top:10px;padding-bottom:10px;padding-right:0;padding-left:0;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><!--[if mso]>
                         <table border="0" cellspacing="0" cellpadding="0" align="center" width="660" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;border-spacing:0 !important;border-collapse:collapse !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:auto !important;margin-left:auto !important;table-layout:fixed !important;" >
@@ -470,6 +301,7 @@ table.center-on-narrow {
                         </table>
                         <![endif]--></td>
             </tr>
+            {% endif %}
             <!-- Thumbnail Left, Text Right : END --> 
             
             

@@ -28,7 +28,7 @@ def wipe_test_data(alias='default'):
         model = getattr(ikwen.accesscontrol.models, name)
         model.objects.using(alias).all().delete()
     for name in ('Coupon', 'CRBillingPlan', 'Reward', 'CumulatedCoupon', 'CouponSummary',
-                 'CouponUse', 'CROperatorProfile', 'JoinRewardPack', 'PaymentRewardPack', ):
+                 'CouponUse', 'CRProfile', 'CROperatorProfile', 'JoinRewardPack', 'PaymentRewardPack', ):
         model = getattr(ikwen.rewarding.models, name)
         model.objects.using(alias).all().delete()
     for name in ('UserPermissionList', 'GroupPermissionList',):
@@ -66,13 +66,23 @@ class RewardingViewsTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
+    def test_Configuration_activate(self):
+        self.client.login(username='member2', password='admin')
+        response = self.client.get(reverse('rewarding:configuration'), {'action': 'activate'})
+        self.assertEqual(response.status_code, 302)
+        service = get_service_instance()
+        cr_profile = CROperatorProfile.objects.using(UMBRELLA).get(service=service)
+
+    @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
     def test_Configuration_save_billing(self):
         self.client.login(username='member2', password='admin')
-        response = self.client.get(reverse('rewarding:configuration'),
-                                   {'action': 'save_billing', 'plan_id': '593984fc0c279dc0f73b2281', 'sms': 'on'})
-        self.assertEqual(response.status_code, 200)
-        json_response = json.loads(response.content)
-        self.assertTrue(json_response['success'])
+        service = get_service_instance()
+        plan_id = '593984fc0c279dc0f73b2281'
+        plan = CRBillingPlan.objects.get(pk=plan_id)
+        response = self.client.post(reverse('rewarding:configuration') + '?action=save_billing',
+                                    {'plan_id': plan_id, 'sms_push': 'on'})
+        cr_profile = CROperatorProfile.objects.using(UMBRELLA).get(service=service)
+        self.assertEqual(cr_profile.plan, plan)
 
     @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
     def test_Configuration_save_rewards_packs(self):
@@ -88,11 +98,11 @@ class RewardingViewsTestCase(unittest.TestCase):
             "payment": [
                 {
                     "floor": 0, "ceiling": 5000,
-                    "rewards": [{"coupon_id": id1, "count": 10}, {"coupon_id": id2, "count": 15}]
+                    "reward_list": [{"coupon_id": id1, "count": 10}, {"coupon_id": id2, "count": 15}]
                 },
                 {
-                    "floor": 5000, "ceiling": 15000,
-                    "rewards": [{"coupon_id": id1, "count": 20}, {"coupon_id": id2, "count": 30}]
+                    "floor": 5001, "ceiling": 15000,
+                    "reward_list": [{"coupon_id": id1, "count": 20}, {"coupon_id": id2, "count": 30}]
                 },
             ]
         }
@@ -111,8 +121,8 @@ class RewardingViewsTestCase(unittest.TestCase):
         self.assertEqual(PaymentRewardPack.objects.using(UMBRELLA).all().count(), 4)
         PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c1, count=10, floor=0, ceiling=5000)
         PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c2, count=15, floor=0, ceiling=5000)
-        PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c1, count=20, floor=5000, ceiling=15000)
-        PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c2, count=30, floor=5000, ceiling=15000)
+        PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c1, count=20, floor=5001, ceiling=15000)
+        PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c2, count=30, floor=5001, ceiling=15000)
 
     @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
     def test_Dashboard(self):
@@ -122,3 +132,12 @@ class RewardingViewsTestCase(unittest.TestCase):
         self.client.login(username='member2', password='admin')
         response = self.client.get(reverse('rewarding:dashboard'))
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
+    def test_CouponDetail(self):
+        """
+        Make sure the url is reachable
+        """
+        response = self.client.get(reverse('rewarding:coupon_detail'), {'id': '593928184fc0c279dc0f73b1'})
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.content)

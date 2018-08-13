@@ -1,5 +1,5 @@
 {% extends 'core/change_object_base.html' %}
-{% load i18n humanize staticfiles auth_tokens %}
+{% load i18n humanize static auth_tokens %}
 
 {% block page_title %}
 <title> {% if obj %}{{ obj.name }}{% else %}{% trans "New Card" %}{% endif %} - {{ service.project_name }} </title>
@@ -8,6 +8,48 @@
 {% block head_style %}
     {{ block.super }}
     <link href="{% static 'ikwen/css/uploader-single.css' %}" media="screen" rel="stylesheet" type="text/css" />
+    <style>
+        .form-container {padding: 0}
+        time {position: absolute; right: 20px}
+        @media (max-width: 767px) {
+            #admin-content > .row {margin: 0}
+            #admin-content.change-form form {padding: 15px 0}
+            .winners-container {padding: 0}
+            .winners-title {padding: 0 15px}
+            .member {height: 81px}
+        }
+        @media (min-width: 768px) {
+            .winners-container {margin-left: -15px}
+            #admin-content .member .info {
+                max-width: 290px;
+            }
+            .member {height: 70px}
+            .member .photo {
+                border-radius: 23px;
+                height: 46px;
+                width: 46px;
+            }
+        }
+        @media (max-width: 991px) {
+            .winners-container {margin-top: 15px}
+        }
+        @media (min-width: 992px) {
+            .admin-form .form-control:not([type=checkbox]) {
+                width: 360px;
+            }
+            #admin-content .member .info {
+                max-width: 290px;
+            }
+        }
+        @media (min-width: 1200px) {
+            .admin-form .form-control:not([type=checkbox]) {
+                width: 400px;
+            }
+            #admin-content .member .info {
+                max-width: 360px;
+            }
+        }
+    </style>
 {% endblock %}
 {% block head_js %}
     {{ block.super }}
@@ -21,24 +63,74 @@
     {% if obj %}
         <li>{{ obj }}</li>
     {% else %}
-        <li>{% trans 'New Card' %}</li>
+        <li>{% trans 'New Coupon' %}</li>
     {% endif %}
 {% endblock %}
 
 {% block admin_content %}
     <div id="admin-content" class="change-form">
-        {% if errors %}<p class="alert alert-danger">{{ errors }}</p>{% endif %}
-        <form class="admin-form" method="post">{% csrf_token %}
-            <input type="hidden" name="image_url" id="image_url" value="{% if obj.image.name %}{{ obj.image.url }}{% endif %}" />
-            <div class="container-fluid">
-                {% include 'core/snippets/model_admin_form.html' %}
-                {% with model_name='rewarding.Card' image=obj.image image_field_name='image' label_field_name='name' img_help_text='Card image: 400px x 600px' %}
-                    {% include 'core/snippets/uploader_single.html' %}
-                {% endwith %}
-                <div class="form-group col-xs-12 col-sm-4 col-md-3" style="clear: both; padding-top: 15px">
-                    <button class="btn btn-sm btn-primary btn-block">{% trans "Save" %}</button>
-                </div>
+        <div class="row">
+            <div class="col-sm-6 form-container">
+                {% if errors %}<p class="alert alert-danger">{{ errors }}</p>{% endif %}
+                <form class="admin-form" method="post">{% csrf_token %}
+                    <input type="hidden" name="image_url" id="image_url" value="{% if obj.image.name %}{{ obj.image.url }}{% endif %}" />
+                    <div class="container-fluid">
+                        {% include 'core/snippets/model_admin_form.html' %}
+                        {% with image=obj.image img_help_text='Card image: 400px x 600px' %}
+                            {% include 'rewarding/snippets/uploader_single.html' %}
+                        {% endwith %}
+                        <div class="form-group col-xs-12 col-sm-8 col-md-6" style="clear: both; padding-top: 15px">
+                            <button class="btn btn-sm btn-primary btn-block">{% trans "Save" %}</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+            <div class="col-sm-6 winners-container">
+                <div class="winners-title">
+                    <h3>Happles</h3>
+                    <p class="text-muted" style="margin-top: -10px">{% trans "Free winners" %}</p>
+                </div>
+                <ul class="people object-list" style="margin: 0; padding: 0">
+                {% for member in winner_list %}
+                    <li id="{{ member.id }}" class="member {{ member.get_status }}" data-id="{{ member.id }}">
+                        {% url 'ikwen:profile' member.id as member_url %}
+                        <time>{{ member.date_joined|date }}</time>
+                        {% if member.photo and member.photo.name %}
+                            <a href="{{ member_url|ikwenize }}" class="photo" style="background-image: url({{ settings.IKWEN_MEDIA_URL }}{{ member.photo.small_name }})"></a>
+                        {% else %}
+                            <a href="{{ member_url|ikwenize }}" class="photo" style="background-image: url({% static 'ikwen/img/login-avatar.jpg' %})"></a>
+                        {% endif %}
+                        <div class="info">
+                            <a href="{{ member_url|ikwenize }}" class="full_name">{{ member.full_name }}</a>
+                            <p class="about">{{ member.phone }}, {{ member.email }}</p>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li style="border: 1px solid #03A9F4; border-radius: 3px; display: inline-block; padding: 15px">
+                        <div>
+                            {% trans "No winner for now" %}
+                        </div>
+                        <p>{% blocktrans %}
+                            <em class="text-muted">You must set a <b>Month quota</b> bigger than 0.</em>
+                            <a class="set-month-quota" href="javascript:;">Set now</a>
+                        {% endblocktrans %}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+        </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        (function() {
+            $('.set-month-quota').click(function() {
+                $('.field-month_quota').addClass('failure');
+                $('#id_month_quota').focus();
+            })
+        })()
+    </script>
 {% endblock %}

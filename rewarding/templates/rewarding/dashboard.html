@@ -1,5 +1,5 @@
 {% extends "core/app_base_admin.html" %}
-{% load i18n humanize staticfiles auth_tokens admin_list %}
+{% load i18n humanize static admin_list %}
 
 {% block page_title %}
 <title>{% trans "Dashboard" %} - {% trans "Continuous Rewarding" %} - ikwen </title>
@@ -8,7 +8,7 @@
 {% block head_style %}
     {{ block.super }}
     <link rel='stylesheet' href="{% static 'ikwen/css/dashboard.css' %}" />
-    <link href="{% static 'ikwen/css/rewarding.css' %}" media="screen" rel="stylesheet" type="text/css" />
+    <link href="{% static 'ikwen/css/../../../../CR/rewarding/static/rewarding/css/rewarding.css' %}" media="screen" rel="stylesheet" type="text/css" />
 {% endblock %}
 
 {% block head_js %}

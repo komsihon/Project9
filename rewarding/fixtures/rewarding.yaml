@@ -1,6 +1,15 @@
 - model: rewarding.crbillingplan
   pk: 593984fc0c279dc0f73b2281
   fields:
+    name: Free Test
+    slug: free-test
+    audience_size: 1000
+    raw_monthly_cost: 0
+    sms_monthly_cost: 0
+
+- model: rewarding.crbillingplan
+  pk: 593984fc0c279dc0f73b2282
+  fields:
     name: Standard
     slug: standard
     audience_size: 1000
@@ -8,7 +17,7 @@
     sms_monthly_cost: 1000
 
 - model: rewarding.croperatorprofile
-  pk: 56f00925b37b332f2aac9791
+  pk: 56f00925b37b332f2aac9792
   fields:
     service: 56eb6d04b37b3379b531b102
     plan: 593984fc0c279dc0f73b2281
@@ -23,6 +32,7 @@
     type: Gift
     status: Approved
     description: Ndogmangolo
+    month_quota: 10
 
 - model: rewarding.coupon
   pk: 593928184fc0c279dc0f73b2
@@ -33,22 +43,23 @@
     type: Discount
     status: Approved
     description: 10% Off
+    month_quota: 10
 
-- model: rewarding.joinreward
+- model: rewarding.joinrewardpack
   pk: 5939280c2c0f73b24fc817d1
   fields:
     service: 56eb6d04b37b3379b531b102
     coupon: 593928184fc0c279dc0f73b1
     count: 10
 
-- model: rewarding.joinreward
+- model: rewarding.joinrewardpack
   pk: 5939280c2c0f73b24fc817d2
   fields:
     service: 56eb6d04b37b3379b531b102
     coupon: 593928184fc0c279dc0f73b2
     count: 20
 
-- model: rewarding.paymentreward
+- model: rewarding.paymentrewardpack
   pk: 593922c0f73b24fc817d28c1
   fields:
     service: 56eb6d04b37b3379b531b102
@@ -57,7 +68,7 @@
     floor: 0
     ceiling: 5000
 
-- model: rewarding.paymentreward
+- model: rewarding.paymentrewardpack
   pk: 593922c0f73b24fc817d28c2
   fields:
     service: 56eb6d04b37b3379b531b102
@@ -66,7 +77,7 @@
     floor: 5000
     ceiling: 15000
 
-- model: rewarding.paymentreward
+- model: rewarding.paymentrewardpack
   pk: 593922c0f73b24fc817d28c3
   fields:
     service: 56eb6d04b37b3379b531b102
@@ -75,7 +86,7 @@
     floor: 0
     ceiling: 5000
 
-- model: rewarding.paymentreward
+- model: rewarding.paymentrewardpack
   pk: 593922c0f73b24fc817d28c4
   fields:
     service: 56eb6d04b37b3379b531b102
