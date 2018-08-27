@@ -8,18 +8,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ikwen.conf.settings")
 
 from datetime import datetime, timedelta
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.core import mail
 from django.core.mail import EmailMessage
-from django.core.urlresolvers import reverse
-from django.utils import timezone
-from django.utils.module_loading import import_by_path
-from django.utils.log import AdminEmailHandler
 from django.utils.translation import gettext as _
 from ikwen.accesscontrol.models import Member
 
-from ikwen.core.models import Config, QueuedSMS, Service
-from ikwen.core.utils import get_service_instance, send_sms, add_event, set_counters, add_database
+from ikwen.core.models import Service
+from ikwen.core.utils import get_service_instance, add_event, set_counters, add_database
 from ikwen.core.utils import get_mail_content, increment_history_field
 
 from ikwen.accesscontrol.backends import UMBRELLA

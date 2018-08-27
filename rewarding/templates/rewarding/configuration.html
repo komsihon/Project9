@@ -389,7 +389,7 @@
                                                     <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
                                                         <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-3 col-md-2">{{ coupon.name }}</label>
                                                         <div class="col-xs-4">
-                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="10" class="form-control input-sm" />
+                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="{{ coupon.payment_reward.count }}" class="form-control input-sm" />
                                                         </div>
                                                     </div>
                                                 {% endfor %}
@@ -404,7 +404,7 @@
                                                     <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
                                                         <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-3 col-md-2">{{ coupon.name }}</label>
                                                         <div class="col-xs-4">
-                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="10" class="form-control input-sm" />
+                                                            <input id="pmt-{{ coupon.slug }}" type="number" value="{{ coupon.payment_reward.count }}" class="form-control input-sm" />
                                                         </div>
                                                     </div>
                                                 {% endfor %}
@@ -515,16 +515,16 @@
                     <div class="col-sm-6">
                         <div style="margin-bottom: 30px">
                             <h3>{% trans "Continuous Rewarding" %}</h3>
-                            <p>
+                            <p>{% blocktrans %}
                                 Continuous rewarding is an automated system that lets you attract customers
                                 and keep them engaged by continuously offering them free coupons.
                                 They need to collect 100 of any coupon to obtain the gift stated by
                                 the Coupon.
-                            </p>
-                            <p>
+                            {% endblocktrans %}</p>
+                            <p>{% blocktrans %}
                                 Visit <a href="http://blog.ikwen.com/continuous-rewarding">blog.ikwen.com/continuous-rewarding</a>
                                 to know more.
-                            </p>
+                            {% endblocktrans %}</p>
                         </div>
                         <button class="btn btn-success" data-toggle="modal"
                                 data-target="#cr-terms-prompt" style="min-width: 200px">{% trans "Get Started" %}</button>

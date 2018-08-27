@@ -1,0 +1,49 @@
+- model: rewarding.cumulatedcoupon
+  fields:
+    member: 56eb6d04b37b3379b531e011
+    coupon: 593928184fc0c279dc0f73b1
+    count: 70
+
+- model: rewarding.cumulatedcoupon
+  fields:
+    member: 56eb6d04b37b3379b531e011
+    coupon: 593928184fc0c279dc0f73b2
+    count: 110
+
+- model: rewarding.cumulatedcoupon
+  fields:
+    member: 56eb6d04b37b3379b531e012
+    coupon: 593928184fc0c279dc0f73b1
+    count: 120
+
+- model: rewarding.cumulatedcoupon
+  fields:
+    member: 56eb6d04b37b3379b531e012
+    coupon: 593928184fc0c279dc0f73b2
+    count: 50
+
+- model: rewarding.couponwinner
+  fields:
+    member: 56eb6d04b37b3379b531e011
+    coupon: 593928184fc0c279dc0f73b1
+    collected: Yes
+
+- model: rewarding.couponwinner
+  fields:
+    member: 56eb6d04b37b3379b531e012
+    coupon: 593928184fc0c279dc0f73b1
+    collected: No
+
+- model: rewarding.couponsummary
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    member: 56eb6d04b37b3379b531e011
+    count: 180
+    threshold_reached: Yes
+
+- model: rewarding.couponsummary
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    member: 56eb6d04b37b3379b531e012
+    count: 170
+    threshold_reached: Yes

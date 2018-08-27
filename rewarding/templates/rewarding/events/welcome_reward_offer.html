@@ -1,0 +1,96 @@
+{% load i18n static humanize auth_tokens currency %}
+<h4 class="text-primary col-xs-12">
+    <span>{% trans "Welcome reward" %}</span>
+</h4>
+<div style="padding: 0 15px">
+    <div>
+        <div class="coupon-event count-{{ tile_count }}">
+            {% if reward_list|length == 1 %}
+                {% with reward=reward_list.0 %}
+                <div class="stretched coupon-tile tile-1"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+            {% elif reward_list|length == 2 %}
+                {% with reward=reward_list.0 %}
+                <div class="stretched coupon-tile tile-2"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% with reward=reward_list.1 %}
+                <div class="stretched coupon-tile tile-2"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+            {% elif reward_list|length == 3 %}
+                {% with reward=reward_list.0 %}
+                <div class="stretched coupon-tile tile-3-1"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% with reward=reward_list.1 %}
+                <div class="stretched coupon-tile tile-3-2"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% with reward=reward_list.2 %}
+                <div class="stretched coupon-tile tile-3-2"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+            {% elif reward_list|length >= 4 %}
+                {% with reward=reward_list.0 %}
+                <div class="stretched coupon-tile tile-3-1"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% with reward=reward_list.1 %}
+                <div class="stretched coupon-tile tile-3-2"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="text-has-shade coupon-count">
+                        <span>x{{ reward.count }}</span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% with reward=reward_list.2 %}
+                <div class="coupon-tile tile-3-2"
+                     style="background-image: url({{ IKWEN_MEDIA_URL }}{{ reward.coupon.image.name }})">
+                    <div class="stretched more">
+                        <h2 class="main">+{{ more_entries }}</h2>
+                    </div>
+                </div>
+                {% endwith %}
+            {% endif %}
+        </div>
+        <p>{% blocktrans %}
+            Hey! You just earned {{ total_coupon }} coupons for joining us. Collect 100 of any
+            and exchange them for the equivalent.
+        {% endblocktrans %}</p>
+        {% url 'ikwen:company_profile' service.project_name_slug as company_url %}
+        <div class="col-xs-8 col-xs-offset-2 col-sm-offset-3 col-sm-6" style="margin-top: 5px">
+            <a href="{{ company_url|ikwenize }}" class="btn btn-success btn-sm btn-block">{% trans "View your coupons" %}</a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>

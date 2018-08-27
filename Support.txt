@@ -1,6 +1,6 @@
 Discover Continuous Rewarding
 
-Explain more about Coupon
+Explain more about Coupons to IAO
 http://support.ikwen.com/rewarding/coupons
 
 Configuration of Join Reward
@@ -8,3 +8,9 @@ http://support.ikwen.com/rewarding/join-reward
 
 Configuration of Payment Reward
 http://support.ikwen.com/rewarding/payment-reward
+
+Explain how to collect coupons. Where the user is taken if he clicks the button in the mail
+http://blog.ikwen.com/how-to-collect-coupons
+
+Explain how to recover earned coupons. Where the user is taken if he clicks the button in the mail
+http://blog.ikwen.com/how-to-recover-my-earned-coupons

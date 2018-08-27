@@ -27,8 +27,8 @@ def wipe_test_data(alias='default'):
     for name in ('Member', 'AccessRequest', ):
         model = getattr(ikwen.accesscontrol.models, name)
         model.objects.using(alias).all().delete()
-    for name in ('Coupon', 'CRBillingPlan', 'Reward', 'CumulatedCoupon', 'CouponSummary',
-                 'CouponUse', 'CRProfile', 'CROperatorProfile', 'JoinRewardPack', 'PaymentRewardPack', ):
+    for name in ('Coupon', 'CRBillingPlan', 'Reward', 'CumulatedCoupon', 'CouponSummary', 'CouponUse',
+                 'CouponWinner', 'CRProfile', 'CROperatorProfile', 'JoinRewardPack', 'PaymentRewardPack', ):
         model = getattr(ikwen.rewarding.models, name)
         model.objects.using(alias).all().delete()
     for name in ('UserPermissionList', 'GroupPermissionList',):
@@ -72,6 +72,27 @@ class RewardingViewsTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         service = get_service_instance()
         cr_profile = CROperatorProfile.objects.using(UMBRELLA).get(service=service)
+
+    @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102', UNIT_TESTING=True)
+    def test_Configuration_delete_coupon(self):
+        call_command('loaddata', 'collected.yaml', database=UMBRELLA)
+        s = '56eb6d04b37b3379b531b102'
+        m1 = '56eb6d04b37b3379b531e011'
+        m2 = '56eb6d04b37b3379b531e012'
+        c = '593928184fc0c279dc0f73b1'
+        self.client.login(username='member2', password='admin')
+        response = self.client.get(reverse('rewarding:configuration'), {'action': 'delete', 'selection': c})
+        self.assertEqual(response.status_code, 200)
+        summary1 = CouponSummary.objects.get(service=s, member=m1)
+        summary2 = CouponSummary.objects.get(service=s, member=m2)
+        self.assertRaises(CumulatedCoupon.DoesNotExist, CumulatedCoupon.objects.get, member=m1, coupon=c)
+        self.assertRaises(CumulatedCoupon.DoesNotExist, CumulatedCoupon.objects.get, member=m2, coupon=c)
+        self.assertRaises(CouponWinner.DoesNotExist, CouponWinner.objects.get, member=m2, coupon=c)
+        self.assertIsNotNone(CouponWinner.objects.get(member=m1, coupon=c))
+        self.assertEqual(summary1.count, 110)
+        self.assertTrue(summary1.threshold_reached)
+        self.assertEqual(summary2.count, 50)
+        self.assertFalse(summary2.threshold_reached)
 
     @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
     def test_Configuration_save_billing(self):

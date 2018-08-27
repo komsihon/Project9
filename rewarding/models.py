@@ -1,5 +1,8 @@
+from threading import Thread
+
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djangotoolbox.fields import ListField
@@ -17,6 +20,7 @@ REWARD_PACK_OFFER = 'RewardPackOffer'
 FREE_REWARD_OFFERED = 'FreeRewardOffered'
 WELCOME_REWARD_OFFERED = 'WelcomeRewardOffered'
 PAYMENT_REWARD_OFFERED = 'PaymentRewardOffered'
+MANUAL_REWARD_OFFERED = 'ManualRewardOffered'
 
 
 class Coupon(AbstractWatchModel):
@@ -112,7 +116,7 @@ class Coupon(AbstractWatchModel):
     def get_payment_reward_pack(self, floor, ceiling):
         try:
             return PaymentRewardPack.objects.using(UMBRELLA).get(coupon=self, floor=floor, ceiling=ceiling)
-        except Reward.DoesNotExist:
+        except PaymentRewardPack.DoesNotExist:
             pass
 
 
@@ -129,6 +133,7 @@ class Reward(Model):
     JOIN = 'Join'  # Received after joining community
     FREE = 'Free'  # Received for free
     PAYMENT = 'Payment'  # Received after online payment
+    MANUAL = 'Manual'  # Received after a mission
 
     service = models.ForeignKey(Service, related_name='+')
     member = models.ForeignKey(Member)
@@ -136,6 +141,9 @@ class Reward(Model):
     count = models.IntegerField(default=0)
     status = models.CharField(max_length=15, default=PREPARED, db_index=True)
     type = models.CharField(max_length=15, default=FREE, db_index=True)
+    object_id = models.CharField(max_length=60, blank=True, null=True, db_index=True)
+    amount = models.FloatField(blank=True, null=True, db_index=True,
+                               help_text="Amount that was paid to trigger the reward.")
 
 
 class MemberCoupon(Model):
@@ -196,9 +204,10 @@ class CRProfile(Model):
     is supposed to exist only in the Service's database
     and not in umbrella.
     """
-    FREE_REWARD = 3
-    PAYMENT_REWARD = 2
     JOIN_REWARD = 1
+    PAYMENT_REWARD = 2
+    MANUAL_REWARD = 3
+    FREE_REWARD = 4
     member = models.OneToOneField(Member)
     reward_score = models.IntegerField(default=JOIN_REWARD, db_index=True)
     coupon_score = models.IntegerField(default=0, db_index=True)
@@ -297,3 +306,47 @@ class PaymentRewardPack(EarnedReward):
             ('service', 'coupon', 'floor', ),
             ('service', 'coupon', 'ceiling', ),
         )
+
+
+def purge_coupon(sender, **kwargs):
+    """
+    Deletes all references to a Coupon whenever its
+    status is set to delete=True. We avoid actual deletion
+    in order to prevent ForeignKey references issues.
+    """
+    if sender != Coupon:  # Avoid unending recursive call
+        return
+    instance = kwargs['instance']
+    if not instance.deleted:
+        return
+
+    def clear_references(coupon):
+        service = coupon.service
+        for win in CouponWinner.objects.using(UMBRELLA).filter(coupon=coupon, collected=False):
+            win.delete()
+
+        # Avoid memory overflow by processing in chunks of 500
+        total = CumulatedCoupon.objects.using(UMBRELLA).filter(coupon=coupon).count()
+        chunks = total / 500 + 1
+        for i in range(chunks):
+            start = i * 500
+            finish = (i + 1) * 500
+            for cumul in CumulatedCoupon.objects.using(UMBRELLA).filter(coupon=coupon)[start:finish]:
+                member = cumul.member
+                summary = CouponSummary.objects.using(UMBRELLA).get(service=service, member=member)
+                summary.count -= cumul.count
+                cumul.delete()
+                threshold_reached = False
+                for c in CumulatedCoupon.objects.using(UMBRELLA).filter(member=member):
+                    if c.count >= c.coupon.heap_size:
+                        threshold_reached = True
+                        break
+                summary.threshold_reached = threshold_reached
+                summary.save()
+    if getattr(settings, 'UNIT_TESTING', False):
+        clear_references(instance)
+    else:  # Run in separate thread in production as it may take some time
+        Thread(target=clear_references, args=(instance,)).start()
+
+
+post_save.connect(purge_coupon, dispatch_uid="coupon_post_save_id")

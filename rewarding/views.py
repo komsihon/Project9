@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.files import File
 from django.core.urlresolvers import reverse
+from django.db.models import get_model
 from django.http.response import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import Context
@@ -25,7 +26,7 @@ from ikwen.core.utils import get_service_instance, get_model_admin_instance
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import ChangeObjectBase
 from ikwen.rewarding.models import Coupon, JoinRewardPack, PaymentRewardPack, CRBillingPlan, CROperatorProfile, \
-    CouponWinner
+    CouponWinner, Reward
 from ikwen.rewarding.admin import CouponAdmin
 
 CONTINUOUS_REWARDING = 'Continuous Rewarding'
@@ -41,9 +42,9 @@ class Configuration(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Configuration, self).get_context_data(**kwargs)
         service = get_service_instance()
-        dc_coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.DISCOUNT)
-        po_coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.PURCHASE_ORDER)
-        gift_coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.GIFT)
+        dc_coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.DISCOUNT, deleted=False)
+        po_coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.PURCHASE_ORDER, deleted=False)
+        gift_coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.GIFT, deleted=False)
         context['plan_list'] = CRBillingPlan.objects.using(UMBRELLA).filter(is_active=True)
         payment_interval_list = []
         bound_list = set()
@@ -87,8 +88,6 @@ class Configuration(TemplateView):
         action = request.GET.get('action')
         if action == 'activate':
             return self.activate()
-        elif action == 'save_billing':
-            return self.save_billing(request)
         elif action == 'delete':
             return self.delete_coupon(request)
         return super(Configuration, self).get(request, *args, **kwargs)
@@ -144,7 +143,10 @@ class Configuration(TemplateView):
         # ... And set new ones
         for reward in rewards['join']:
             coupon_id = reward['coupon_id']
-            coupon = Coupon.objects.using(UMBRELLA).get(pk=coupon_id)
+            try:
+                coupon = Coupon.objects.using(UMBRELLA).get(pk=coupon_id)
+            except Coupon.DoesNotExist:
+                continue
             count = int(reward['count'])
             JoinRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
 
@@ -172,7 +174,10 @@ class Configuration(TemplateView):
             ceiling = int(interval['ceiling'])
             for reward in interval['reward_list']:
                 coupon_id = reward['coupon_id']
-                coupon = Coupon.objects.using(UMBRELLA).get(pk=coupon_id)
+                try:
+                    coupon = Coupon.objects.using(UMBRELLA).get(pk=coupon_id)
+                except Coupon.DoesNotExist:
+                    continue
                 count = int(reward['count'])
                 PaymentRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon,
                                                                  floor=floor, ceiling=ceiling, count=count)
@@ -185,13 +190,14 @@ class Configuration(TemplateView):
             'message': "Coupon %s deleted." % coupon.name,
             'deleted': [coupon.id]
         }
-        ikwen_media_root = ikwen_settings.MEDIA_ROOT
-        if coupon.image.name:
-            try:
-                os.unlink(ikwen_media_root + coupon.image.name)
-            except:
-                pass
-        coupon.delete()
+        # ikwen_media_root = ikwen_settings.MEDIA_ROOT
+        # if coupon.image.name:
+        #     try:
+        #         os.unlink(ikwen_media_root + coupon.image.name)
+        #     except:
+        #         pass
+        coupon.deleted = True
+        coupon.save()
         return HttpResponse(
             json.dumps(response),
             content_type='application/json'
@@ -384,15 +390,38 @@ class CouponUploadBackend(LocalUploadBackend):
 upload_coupon_image = AjaxFileUploader(CouponUploadBackend)
 
 
-def render_reward_offer_event(event, request):
-    try:
-        access_request = AccessRequest.objects.using(UMBRELLA).get(pk=event.object_id)
-    except AccessRequest.DoesNotExist:
-        return None
-    html_template = get_template('rewarding/events/reward_offer.html')
-    database = event.service.database
-    add_database_to_settings(database)
-    member = Member.objects.using(database).get(pk=event.member.id)
-    from ikwen.conf.settings import MEDIA_URL
-    c = Context({'IKWEN_MEDIA_URL': MEDIA_URL})
+def render_welcome_reward_offer_event(event, request):
+    reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.JOIN, member=event.member)
+    html_template = get_template('rewarding/events/welcome_reward_offer.html')
+    entries_count = len(reward_list)
+    more_entries = entries_count - 3  # Number to show on the "View more" button
+    total_coupon = 0
+    tile_count = min(len(reward_list), 3)
+    for reward in reward_list:
+        total_coupon += reward.count
+    from ikwen.conf import settings as ikwen_settings
+    c = Context({'event': event, 'service': event.service, 'reward_list': reward_list,
+                 'more_entries': more_entries, 'total_coupon': total_coupon, 'tile_count': tile_count,
+                 'IKWEN_MEDIA_URL': ikwen_settings.MEDIA_URL})
+    return html_template.render(c)
+
+
+def render_payment_reward_offer_event(event, request):
+    service = event.service
+    reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.PAYMENT, member=event.member,
+                                                        object_id=event.object_id)
+    html_template = get_template('rewarding/events/payment_reward_offer.html')
+    entries_count = len(reward_list)
+    more_entries = entries_count - 3  # Number to show on the "View more" button
+    total_coupon = 0
+    tile_count = min(len(reward_list), 3)
+    amount = reward_list[0].amount
+    for reward in reward_list:
+        total_coupon += reward.count
+    from ikwen.conf import settings as ikwen_settings
+    currency_symbol = service.config.currency_symbol
+    c = Context({'event': event, 'service': event.service, 'reward_list': reward_list,
+                 'more_entries': more_entries, 'total_coupon': total_coupon, 'tile_count': tile_count,
+                 'currency_symbol': currency_symbol, 'amount_paid': amount,
+                 'IKWEN_MEDIA_URL': ikwen_settings.MEDIA_URL})
     return html_template.render(c)

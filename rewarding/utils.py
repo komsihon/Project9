@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from ikwen.core.models import Service
 from ikwen.core.utils import add_event
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.accesscontrol.models import Member
@@ -18,6 +19,7 @@ def reward_member(service, member, type, **kwargs):
         return
     reward_pack = None
     reward_pack_list = []
+    service = Service.objects.using(UMBRELLA).get(pk=service.id)
     member = Member.objects.using(UMBRELLA).get(pk=member.id)
     profile, update = CRProfile.objects.get_or_create(member=member)
     coupon_summary, update = CouponSummary.objects.using(UMBRELLA).get_or_create(service=service, member=member)
@@ -45,6 +47,8 @@ def reward_member(service, member, type, **kwargs):
             add_event(service, WELCOME_REWARD_OFFERED, member)
     elif type == Reward.PAYMENT:
         amount = kwargs.pop('amount')
+        object_id = kwargs.pop('object_id')
+        model = kwargs.pop('model')
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
                 reward_pack = PaymentRewardPack.objects.using(UMBRELLA).get(service=service, coupon=coupon,
@@ -55,7 +59,8 @@ def reward_member(service, member, type, **kwargs):
                     cumul.count += reward_pack.count
                     cumul.save()
                     Reward.objects.using(UMBRELLA).create(service=service, member=member, coupon=coupon,
-                                                          count=reward_pack.count, type=Reward.PAYMENT, status=Reward.SENT)
+                                                          count=reward_pack.count, type=Reward.PAYMENT,
+                                                          status=Reward.SENT, object_id=object_id, amount=amount)
                     coupon_summary.count += reward_pack.count
                     if cumul.count >= coupon.heap_size:
                         CouponWinner.objects.using(UMBRELLA).create(member=member, coupon=coupon)
@@ -67,7 +72,23 @@ def reward_member(service, member, type, **kwargs):
         else:
             profile.reward_score = CRProfile.PAYMENT_REWARD
         if reward_pack:
-            add_event(service, PAYMENT_REWARD_OFFERED, member)
+            add_event(service, PAYMENT_REWARD_OFFERED, member, object_id=object_id, model=model)
+    elif type == Reward.MANUAL:
+        coupon = kwargs.pop('coupon')
+        count = kwargs.pop('count')
+        cumul, update = CumulatedCoupon.objects.using(UMBRELLA).get_or_create(member=member, coupon=coupon)
+        cumul.count += count
+        cumul.save()
+        Reward.objects.using(UMBRELLA).create(service=service, member=member, coupon=coupon,
+                                              count=count, type=Reward.MANUAL, status=Reward.SENT)
+        coupon_summary.count += count
+        if cumul.count >= coupon.heap_size:
+            CouponWinner.objects.using(UMBRELLA).create(member=member, coupon=coupon)
+            coupon_summary.threshold_reached = True
+        coupon_summary.save()
+        profile.coupon_score += count * coupon.coefficient
+        profile.reward_score = CRProfile.MANUAL_REWARD
+        add_event(service, MANUAL_REWARD_OFFERED, member)
     profile.save()
     coupon_summary.save()
     return reward_pack_list
