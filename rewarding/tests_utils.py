@@ -5,11 +5,15 @@ from django.core.management import call_command
 from django.test.client import Client
 from django.test.utils import override_settings
 from django.utils import unittest
+from django.conf import settings
 
-from ikwen.core.utils import get_service_instance
+from ikwen.accesscontrol.models import Member
+from ikwen.accesscontrol.backends import UMBRELLA
+from ikwen.core.models import Service
+from ikwen.rewarding.models import Coupon, Reward, JoinRewardPack, CumulatedCoupon, CouponSummary, PaymentRewardPack, \
+    ReferralRewardPack, CouponUse
+from ikwen.rewarding.utils import reward_member, use_coupon, donate_coupon
 from ikwen.rewarding.tests_views import wipe_test_data
-from ikwen.rewarding.models import *
-from ikwen.rewarding.utils import *
 
 
 class RewardingUtilsTestCase(unittest.TestCase):
@@ -49,12 +53,28 @@ class RewardingUtilsTestCase(unittest.TestCase):
         self.assertEqual(scs.count, total_count)
 
     @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
+    def test_reward_member_with_referral_reward(self):
+        member = Member.objects.using(UMBRELLA).get(username='member3')
+        service = Service.objects.using(UMBRELLA).get(pk=getattr(settings, 'IKWEN_SERVICE_ID'))
+        reward_member(service, member, Reward.REFERRAL)
+        total_count = 0
+        for ref in ReferralRewardPack.objects.using(UMBRELLA).all():
+            coupon = ref.coupon
+            total_count += ref.count
+            Reward.objects.using(UMBRELLA).get(member=member, coupon=coupon, count=ref.count,
+                                               type=Reward.REFERRAL, status=Reward.SENT)
+            cumul = CumulatedCoupon.objects.using(UMBRELLA).get(member=member, coupon=coupon)
+            self.assertEqual(cumul.count, ref.count)
+        scs = CouponSummary.objects.using(UMBRELLA).get(service=service, member=member)
+        self.assertEqual(scs.count, total_count)
+
+    @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102')
     def test_reward_member_with_member_payment(self):
         member = Member.objects.using(UMBRELLA).get(username='member3')
         service = Service.objects.using(UMBRELLA).get(pk=getattr(settings, 'IKWEN_SERVICE_ID'))
         amount = 8000
         reward_member(service, member, Reward.PAYMENT, amount=amount,
-                      object_id='56eb6d04b37b3379b531b102', model='core.Service')
+                      object_id='56eb6d04b37b3379b531b102', model_name='core.Service')
         total_count = 0
         for pr in PaymentRewardPack.objects.using(UMBRELLA).filter(floor__lt=amount, ceiling__gte=amount):
             coupon = pr.coupon

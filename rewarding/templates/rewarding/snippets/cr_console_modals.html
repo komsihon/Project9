@@ -1,0 +1,96 @@
+{% load i18n static %}
+<div class="modal fade" id="claim-reward" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content modal-info">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{% trans "Claim your reward" %}</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong>{% trans "Congratulations" %} !</strong></p>
+                <p>{% blocktrans %}
+                    You have collected 100 coupons and can enjoy your reward now. To do so,
+                    go to our online store, contact us or come to our place.{% endblocktrans %}
+                </p>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="profile-about" style="padding: 5px 20px 20px">
+                <ul>
+                    {% if is_company and not app %}
+                        <li>
+                            <label>{% trans "Website" %}</label>
+                            <span>
+                                <a href="{{ page_service.url }}" target="_blank">{{ page_service.url }}</a>
+                            </span>
+                        </li>
+                    {% endif %}
+                    {% if profile_email %}
+                        <li>
+                            <label>E-mail</label>
+                            <span>{{ profile_email }}</span>
+                        </li>
+                    {% endif %}
+                    {% if profile_phone %}
+                        <li>
+                            <label>{% trans "Phone" %}</label>
+                            <a href="tel://{{ profile_phone }}">{{ profile_phone }}</a>
+                        </li>
+                    {% endif %}
+                    {% if profile_address %}
+                        <li>
+                            <label>{% trans "Address" %}</label>
+                            <span>{{ profile_address }}</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="coupon-detail" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content modal-info">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body text-center">
+                <img class="img" />
+                <p class="description text-left" style="margin-top: 15px"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="whatsapp-share" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content modal-info">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{% trans "Share on WhatsApp" %}</h4>
+            </div>
+            <div class="modal-body text-center">
+                <form onclick="return false" class="form-horizontal">
+                    <div class="form-group row">
+                        <label for="whatsapp-share-msg" class="col-sm-5 col-md-4">{% trans "Message" %}</label>
+                        <div class="col-sm-7 col-md-8">
+                            <textarea id="whatsapp-share-msg"
+                                      class="form-control input-sm">{% blocktrans %}Hey! Join {{ profile_name }} on ikwen and get some free gifts. I just did it. It works !{% endblocktrans %}</textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="actions">
+                    <div class="col-xs-12 col-sm-4 col-md-3 pull-right action">
+                        <button class="btn btn-success btn-block btn-sm ok"
+                                data-dismiss="modal" aria-label="OK">OK</button>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-md-3 pull-right action">
+                        <button class="btn btn-default btn-block btn-sm"
+                                data-dismiss="modal" aria-label="Close">{% trans "Cancel" %}</button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>

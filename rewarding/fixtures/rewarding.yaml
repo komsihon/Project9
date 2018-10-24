@@ -59,6 +59,20 @@
     coupon: 593928184fc0c279dc0f73b2
     count: 20
 
+- model: rewarding.referralrewardpack
+  pk: 5939280c73b24fc817d2c0f1
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b1
+    count: 25
+
+- model: rewarding.referralrewardpack
+  pk: 5939280c73b24fc817d2c0f2
+  fields:
+    service: 56eb6d04b37b3379b531b102
+    coupon: 593928184fc0c279dc0f73b2
+    count: 25
+
 - model: rewarding.paymentrewardpack
   pk: 593922c0f73b24fc817d28c1
   fields:

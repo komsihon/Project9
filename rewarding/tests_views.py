@@ -7,7 +7,11 @@ from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.test.utils import override_settings
 from django.utils import unittest
-from ikwen.rewarding.models import *
+
+from ikwen.accesscontrol.backends import UMBRELLA
+from ikwen.core.utils import get_service_instance
+from ikwen.rewarding.models import Coupon, JoinRewardPack, CumulatedCoupon, CouponSummary, PaymentRewardPack, \
+    ReferralRewardPack, CROperatorProfile, CouponWinner, CRBillingPlan
 
 
 def wipe_test_data(alias='default'):
@@ -27,8 +31,9 @@ def wipe_test_data(alias='default'):
     for name in ('Member', 'AccessRequest', ):
         model = getattr(ikwen.accesscontrol.models, name)
         model.objects.using(alias).all().delete()
-    for name in ('Coupon', 'CRBillingPlan', 'Reward', 'CumulatedCoupon', 'CouponSummary', 'CouponUse',
-                 'CouponWinner', 'CRProfile', 'CROperatorProfile', 'JoinRewardPack', 'PaymentRewardPack', ):
+    for name in ('Coupon', 'CRBillingPlan', 'Reward', 'CumulatedCoupon', 'CouponSummary',
+                 'CouponUse', 'CouponWinner', 'CRProfile', 'CROperatorProfile',
+                 'JoinRewardPack', 'ReferralRewardPack', 'PaymentRewardPack', ):
         model = getattr(ikwen.rewarding.models, name)
         model.objects.using(alias).all().delete()
     for name in ('UserPermissionList', 'GroupPermissionList',):
@@ -116,6 +121,7 @@ class RewardingViewsTestCase(unittest.TestCase):
         self.client.login(username='member2', password='admin')
         data = {
             "join": [{"coupon_id": id1, "count": 10}, {"coupon_id": id2, "count": 10}],
+            "referral": [{"coupon_id": id1, "count": 25}, {"coupon_id": id2, "count": 25}],
             "payment": [
                 {
                     "floor": 0, "ceiling": 5000,
@@ -138,6 +144,10 @@ class RewardingViewsTestCase(unittest.TestCase):
         self.assertEqual(JoinRewardPack.objects.using(UMBRELLA).all().count(), 2)
         JoinRewardPack.objects.using(UMBRELLA).get(coupon=c1, count=10)
         JoinRewardPack.objects.using(UMBRELLA).get(coupon=c2, count=10)
+
+        self.assertEqual(ReferralRewardPack.objects.using(UMBRELLA).all().count(), 2)
+        ReferralRewardPack.objects.using(UMBRELLA).get(coupon=c1, count=25)
+        ReferralRewardPack.objects.using(UMBRELLA).get(coupon=c2, count=25)
 
         self.assertEqual(PaymentRewardPack.objects.using(UMBRELLA).all().count(), 4)
         PaymentRewardPack.objects.using(UMBRELLA).get(coupon=c1, count=10, floor=0, ceiling=5000)

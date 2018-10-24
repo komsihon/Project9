@@ -6,6 +6,9 @@ http://support.ikwen.com/rewarding/coupons
 Configuration of Join Reward
 http://support.ikwen.com/rewarding/join-reward
 
+Configuration of Referral Reward
+http://support.ikwen.com/rewarding/referral-reward
+
 Configuration of Payment Reward
 http://support.ikwen.com/rewarding/payment-reward
 

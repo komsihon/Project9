@@ -10,14 +10,13 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core import mail
 from django.core.mail import EmailMessage
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, activate
 from ikwen.accesscontrol.models import Member
 
 from ikwen.core.models import Service
 from ikwen.core.utils import get_service_instance, add_event, set_counters, add_database
 from ikwen.core.utils import get_mail_content, increment_history_field
 
-from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.rewarding.models import CROperatorProfile, Reward, Coupon, CRProfile, JoinRewardPack, CumulatedCoupon, \
     CouponSummary, CouponWinner, FREE_REWARD_OFFERED
 from ikwen.rewarding.utils import get_last_reward
@@ -236,6 +235,10 @@ def send_free_rewards():
             summary = ' - '.join(summary)
             add_event(ikwen_service, FREE_REWARD_OFFERED, member=member, )
             if member.email:
+                if member.language:
+                    activate(member.language)
+                else:
+                    activate('en')
                 subject = _("Free coupons are waiting for you")
                 html_content = get_mail_content(subject, '', template_name='rewarding/mails/free_reward.html',
                                                 extra_context={'grouped_rewards': grouped_rewards})

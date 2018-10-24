@@ -26,7 +26,7 @@ from ikwen.core.utils import get_service_instance, get_model_admin_instance
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import ChangeObjectBase
 from ikwen.rewarding.models import Coupon, JoinRewardPack, PaymentRewardPack, CRBillingPlan, CROperatorProfile, \
-    CouponWinner, Reward
+    CouponWinner, Reward, ReferralRewardPack
 from ikwen.rewarding.admin import CouponAdmin
 
 CONTINUOUS_REWARDING = 'Continuous Rewarding'
@@ -150,6 +150,19 @@ class Configuration(TemplateView):
             count = int(reward['count'])
             JoinRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
 
+        # Delete all previous set ReferralRewards ...
+        ReferralRewardPack.objects.using(UMBRELLA).filter(service=service).delete()
+
+        # ... And set new ones
+        for reward in rewards['referral']:
+            coupon_id = reward['coupon_id']
+            try:
+                coupon = Coupon.objects.using(UMBRELLA).get(pk=coupon_id)
+            except Coupon.DoesNotExist:
+                continue
+            count = int(reward['count'])
+            ReferralRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
+
         # Delete all previous set PurchaseRewards ...
         PaymentRewardPack.objects.using(UMBRELLA).filter(service=service).delete()
 
@@ -197,6 +210,7 @@ class Configuration(TemplateView):
         #     except:
         #         pass
         coupon.deleted = True
+        coupon.is_active = False
         coupon.save()
         return HttpResponse(
             json.dumps(response),
@@ -221,7 +235,10 @@ class ChangeCoupon(ChangeObjectBase):
     def get_context_data(self, **kwargs):
         context = super(ChangeCoupon, self).get_context_data(**kwargs)
         context['verbose_name_plural'] = CONTINUOUS_REWARDING
-        winner_list = set([obj.member for obj in CouponWinner.objects.using(UMBRELLA).filter(collected=False)])
+        service = get_service_instance()
+        coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service)
+        winner_list = set([obj.member
+                           for obj in CouponWinner.objects.using(UMBRELLA).filter(coupon__in=coupon_list, collected=False)])
         context['winner_list'] = winner_list
         return context
 

@@ -21,6 +21,7 @@ FREE_REWARD_OFFERED = 'FreeRewardOffered'
 WELCOME_REWARD_OFFERED = 'WelcomeRewardOffered'
 PAYMENT_REWARD_OFFERED = 'PaymentRewardOffered'
 MANUAL_REWARD_OFFERED = 'ManualRewardOffered'
+REFERRAL_REWARD_OFFERED = 'ReferralRewardOffered'
 
 
 class Coupon(AbstractWatchModel):
@@ -113,6 +114,13 @@ class Coupon(AbstractWatchModel):
             pass
     join_reward_pack = property(_get_join_reward_pack)
 
+    def _get_referral_reward_pack(self):
+        try:
+            return ReferralRewardPack.objects.using(UMBRELLA).get(coupon=self)
+        except ReferralRewardPack.DoesNotExist:
+            pass
+    referral_reward_pack = property(_get_referral_reward_pack)
+
     def get_payment_reward_pack(self, floor, ceiling):
         try:
             return PaymentRewardPack.objects.using(UMBRELLA).get(coupon=self, floor=floor, ceiling=ceiling)
@@ -132,6 +140,7 @@ class Reward(Model):
     # Type of reward
     JOIN = 'Join'  # Received after joining community
     FREE = 'Free'  # Received for free
+    REFERRAL = 'Referral'  # Received for getting someone to join the community
     PAYMENT = 'Payment'  # Received after online payment
     MANUAL = 'Manual'  # Received after a mission
 
@@ -195,7 +204,7 @@ class CouponUse(MemberCoupon):
     count = models.IntegerField(default=0)
     usage = models.CharField(max_length=30,
                              help_text="How the coupon heap was used. Either during a Payment or by donating.")
-    object_id = models.CharField(max_length=30)
+    object_id = models.CharField(max_length=30, blank=True, null=True)
 
 
 class CRProfile(Model):
@@ -290,6 +299,12 @@ class EarnedReward(Model):
 class JoinRewardPack(EarnedReward):
     """
     Reward earned for joining a community
+    """
+
+
+class ReferralRewardPack(EarnedReward):
+    """
+    Reward earned for getting a Member to join a community
     """
 
 

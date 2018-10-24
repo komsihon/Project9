@@ -6,10 +6,31 @@ from ikwen.core.utils import add_event
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.accesscontrol.models import Member
 from ikwen.rewarding.models import Coupon, JoinRewardPack, CumulatedCoupon, PaymentRewardPack, Reward, CouponSummary, \
-    CouponUse, CRProfile, CouponWinner, WELCOME_REWARD_OFFERED, PAYMENT_REWARD_OFFERED, CROperatorProfile
+    CouponUse, CRProfile, CouponWinner, WELCOME_REWARD_OFFERED, PAYMENT_REWARD_OFFERED, CROperatorProfile, \
+    REFERRAL_REWARD_OFFERED, MANUAL_REWARD_OFFERED, ReferralRewardPack
 
 
 def reward_member(service, member, type, **kwargs):
+    """
+    Rewards a Member on a Service according the the type
+    of reward.
+
+    :param service: Service on which the member is interacting
+    :param member: Member actually concerned
+    :param type: Type of reward. Can be Reward.JOIN, Reward.PAYMENT or Reward.MANUAL
+    :param kwargs: kwargs must be provided depending on type.
+
+        # Reward.PAYMENT, following kwargs are expected:
+            *amount*: amount actually paid by Member
+            *object_id*: ID of the object paid
+            *model_name*: Django style model name. *Eg: trade.Order*
+
+        # Reward.MANUAL, following kwargs are expected:
+            *coupon*: Coupon being donated to the Member
+            *count*: number of coupon given
+
+    :return: A list of JoinRewardPack or PaymentRewardPack
+    """
     now = datetime.now()
     try:
         # All rewarding actions are run only if
@@ -45,10 +66,32 @@ def reward_member(service, member, type, **kwargs):
             profile.reward_score = CRProfile.FREE_REWARD
         if reward_pack:
             add_event(service, WELCOME_REWARD_OFFERED, member)
+    elif type == Reward.REFERRAL:
+        for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
+            try:
+                reward_pack = ReferralRewardPack.objects.using(UMBRELLA).get(service=service, coupon=coupon)
+                if reward_pack.count > 0:
+                    reward_pack_list.append(reward_pack)
+                    cumul, update = CumulatedCoupon.objects.using(UMBRELLA).get_or_create(member=member, coupon=coupon)
+                    cumul.count += reward_pack.count
+                    cumul.save()
+                    Reward.objects.using(UMBRELLA).create(service=service, member=member, coupon=coupon,
+                                                          count=reward_pack.count, type=Reward.REFERRAL, status=Reward.SENT)
+                    coupon_summary.count += reward_pack.count
+                    if cumul.count >= coupon.heap_size:
+                        CouponWinner.objects.using(UMBRELLA).create(member=member, coupon=coupon)
+                        coupon_summary.threshold_reached = True
+                    profile.coupon_score += reward_pack.count * coupon.coefficient
+            except ReferralRewardPack.DoesNotExist:
+                continue
+        else:
+            profile.reward_score = CRProfile.FREE_REWARD
+        if reward_pack:
+            add_event(service, REFERRAL_REWARD_OFFERED, member)
     elif type == Reward.PAYMENT:
         amount = kwargs.pop('amount')
         object_id = kwargs.pop('object_id')
-        model = kwargs.pop('model')
+        model_name = kwargs.pop('model_name')
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
                 reward_pack = PaymentRewardPack.objects.using(UMBRELLA).get(service=service, coupon=coupon,
@@ -72,7 +115,7 @@ def reward_member(service, member, type, **kwargs):
         else:
             profile.reward_score = CRProfile.PAYMENT_REWARD
         if reward_pack:
-            add_event(service, PAYMENT_REWARD_OFFERED, member, object_id=object_id, model=model)
+            add_event(service, PAYMENT_REWARD_OFFERED, member, object_id=object_id, model=model_name)
     elif type == Reward.MANUAL:
         coupon = kwargs.pop('coupon')
         count = kwargs.pop('count')
@@ -101,7 +144,13 @@ def get_last_reward(member, service):
         return None
 
 
-def use_coupon(member, coupon, object_id):
+def use_coupon(member, coupon, object_id=None):
+    """
+    Marks a Coupon heap as used to acquire any item with ID object_id
+    :param member: Member that owns coupon
+    :param coupon: Coupon being saved
+    :param object_id: ID of the item
+    """
     service = coupon.service
     cumul = CumulatedCoupon.objects.using(UMBRELLA).get(member=member, coupon=coupon)
     if cumul.count < coupon.heap_size:

@@ -269,6 +269,12 @@
                                 {% trans "Join Reward" %}
                             </a>
                         </div>
+                        <div role="presentation" class="tab referral-reward" data-tab="referral-reward">
+                            <a href="#referral-reward" aria-controls="referral-reward" role="tab" data-toggle="tab">
+                                <i class="fa fa-circle attention text-danger"></i>
+                                {% trans "Referral Reward" %}
+                            </a>
+                        </div>
                         <div role="presentation" class="tab payment-reward" data-tab="payment-reward">
                             <a href="#payment-reward" aria-controls="payment-reward" role="tab" data-toggle="tab">
                                 <i class="fa fa-circle attention text-danger"></i>
@@ -324,6 +330,64 @@
                                                 <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
                                                 <div class="col-xs-4 col-sm-8">
                                                     <input id="{{ coupon.slug }}" type="number" value="{{ coupon.join_reward_pack.count }}" class="form-control input-sm" />
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="pull-right col-xs-6 col-sm-3 col-lg-2" style="clear: both">
+                                <button class="btn btn-primary btn-sm btn-block save-reward-packs">{% trans "Save" %}</button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="referral-reward" class="tab-pane" role="tabpanel">
+                            <p class="coupons-directions">{% blocktrans %}
+                                Configure how many of each coupon members earn for getting
+                                a member to join your community through his referral link.
+                                <a href="http://support.ikwen.com/rewarding/referral-reward">Read more</a>
+                            {% endblocktrans %}</p>
+                            <div>
+                                {% if dc_coupon_list %}
+                                <div class="coupon-group col-sm-6">
+                                    <h5 class="title">{% trans "Discount" %}</h5>
+                                    <div>
+                                        {% for coupon in dc_coupon_list %}
+                                            <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
+                                                <div class="col-xs-4 col-sm-8">
+                                                    <input id="{{ coupon.slug }}" type="number" value="{{ coupon.referral_reward_pack.count }}" class="form-control input-sm" />
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if po_coupon_list %}
+                                <div class="coupon-group col-sm-6">
+                                    <h5 class="title">{% trans "Purchase Order" %}</h5>
+                                    <div>
+                                        {% for coupon in po_coupon_list %}
+                                            <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
+                                                <div class="col-xs-4 col-sm-8">
+                                                    <input id="{{ coupon.slug }}" type="number" value="{{ coupon.referral_reward_pack.count }}" class="form-control input-sm" />
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if gift_coupon_list %}
+                                <div class="coupon-group col-sm-6">
+                                    <h5 class="title">{% trans "Gift" %}</h5>
+                                    <div>
+                                        {% for coupon in gift_coupon_list %}
+                                            <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
+                                                <label for="{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
+                                                <div class="col-xs-4 col-sm-8">
+                                                    <input id="{{ coupon.slug }}" type="number" value="{{ coupon.referral_reward_pack.count }}" class="form-control input-sm" />
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -606,8 +670,8 @@
             }).on('click', '.add-interval', function() {
                 $('.interval.tpl').clone().removeClass('tpl').insertBefore('.interval.tpl');
             }).on('click', '.save-reward-packs', function() {
-                var join = [], payment = [], inputCorrect = true;
-                $('.tab.join-reward, .tab.payment-reward').removeClass('error');
+                var join = [], referral = [], payment = [], inputCorrect = true;
+                $('.tab.join-reward, .tab.referral-reward, .tab.payment-reward').removeClass('error');
                 $('div#join-reward .reward').each(function() {
                     var couponId = $(this).data('coupon-id'),
                         count = $(this).find('input').removeClass('input-error').val().trim();
@@ -618,6 +682,17 @@
                         return false;
                     }
                     join.push({coupon_id: couponId, count: count});
+                });
+                $('div#referral-reward .reward').each(function() {
+                    var couponId = $(this).data('coupon-id'),
+                        count = $(this).find('input').removeClass('input-error').val().trim();
+                    if (!/\d+/.test(count)) {
+                        $(this).find('input').addClass('input-error');
+                        inputCorrect = false;
+                        $('.tab.referral-reward:not(.active)').addClass('error');
+                        return false;
+                    }
+                    referral.push({coupon_id: couponId, count: count});
                 });
                 if (!inputCorrect) return;
                 $('div#payment-reward .interval.active').each(function() {
@@ -647,7 +722,7 @@
                     type: 'post',
                     csrfmiddlewaretoken: "{{ csrf_token }}",
                     contentType: 'application/json',
-                    data: JSON.stringify({join: join, payment: payment}),
+                    data: JSON.stringify({join: join, referral: referral, payment: payment}),
                     error: function() {
                         ikwen.showFloatingNotice("Oops! Something went wrong", '', 6);
                     },
