@@ -76,7 +76,7 @@ class RewardingUtilsTestCase(unittest.TestCase):
         reward_member(service, member, Reward.PAYMENT, amount=amount,
                       object_id='56eb6d04b37b3379b531b102', model_name='core.Service')
         total_count = 0
-        for pr in PaymentRewardPack.objects.using(UMBRELLA).filter(floor__lt=amount, ceiling__gte=amount):
+        for pr in PaymentRewardPack.objects.using(UMBRELLA).filter(service=service, floor__lt=amount, ceiling__gte=amount):
             coupon = pr.coupon
             total_count += pr.count
             Reward.objects.using(UMBRELLA).get(member=member, coupon=coupon, count=pr.count,

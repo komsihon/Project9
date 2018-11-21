@@ -13,7 +13,7 @@
             </button>
         {% endif %}
     {% else %}
-        <a class="btn btn-primary btn-sm join-community" href="{% url 'home' %}?join={{ page_service.project_name_slug }}{% if request.GET.referrer %}&referrer={{ request.GET.referrer }}{% endif %}">
+        <a class="btn btn-primary btn-sm join-community" href="{% url 'ikwen:sign_in' %}?join={{ page_service.project_name_slug }}{% if request.GET.referrer %}&referrer={{ request.GET.referrer }}{% endif %}">
             <img src="{% static 'ikwen/img/Join_button_white.svg' %}" height="15" style="margin: -4px 5px 0 0" />
             Join
         </a>

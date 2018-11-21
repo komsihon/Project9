@@ -4,13 +4,11 @@ from datetime import datetime, timedelta
 
 import os
 
-from ajaxuploader.backends.local import LocalUploadBackend
 from ajaxuploader.views import AjaxFileUploader, csrf_exempt
 from django.conf import settings
 from django.contrib import messages
 from django.core.files import File
 from django.core.urlresolvers import reverse
-from django.db.models import get_model
 from django.http.response import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import Context
@@ -22,9 +20,10 @@ from django.utils.translation import gettext as _
 
 from ikwen.conf import settings as ikwen_settings
 from ikwen.core.models import Service
-from ikwen.core.utils import get_service_instance, get_model_admin_instance
+from ikwen.core.utils import get_service_instance, get_model_admin_instance, DefaultUploadBackend
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import ChangeObjectBase
+from ikwen.revival.models import Revival
 from ikwen.rewarding.models import Coupon, JoinRewardPack, PaymentRewardPack, CRBillingPlan, CROperatorProfile, \
     CouponWinner, Reward, ReferralRewardPack
 from ikwen.rewarding.admin import CouponAdmin
@@ -162,6 +161,15 @@ class Configuration(TemplateView):
                 continue
             count = int(reward['count'])
             ReferralRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
+        if len(rewards['referral']) > 0:
+            service = Service.objects.using(UMBRELLA).get(pk=service_id)
+            Revival.objects.using(UMBRELLA)\
+                .get_or_create(service=service, model_name='core.Service', object_id=service.id,
+                               mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
+        else:
+            Revival.objects.using(UMBRELLA)\
+                .filter(service=service, model_name='core.Service', object_id=service.id,
+                        mail_renderer='ikwen.revival.utils.render_suggest_referral_mail').update(is_active=False)
 
         # Delete all previous set PurchaseRewards ...
         PaymentRewardPack.objects.using(UMBRELLA).filter(service=service).delete()
@@ -308,7 +316,6 @@ class ChangeCoupon(ChangeObjectBase):
                         if getattr(settings, 'DEBUG', False):
                             raise e
                         return {'error': 'File failed to upload. May be invalid or corrupted image file'}
-            self.after_save(request, obj, *args, **kwargs)
             next_url = self.get_object_list_url(request, obj, *args, **kwargs)
             if object_id:
                 messages.success(request, obj._meta.verbose_name.capitalize() + ' <strong>' + str(obj).decode('utf8') + '</strong> ' + _('successfully updated'))
@@ -333,13 +340,7 @@ class CouponDetail(DetailView):
         return HttpResponse(json.dumps(coupon.to_dict()), content_type='application/json')
 
 
-class CouponUploadBackend(LocalUploadBackend):
-    def update_filename(self, request, filename, *args, **kwargs):
-        tokens = filename.split('.')
-        ext = tokens[-1]
-        name = ''.join(tokens[:-1])
-        filename = slugify(name) + '.' + ext
-        return super(CouponUploadBackend, self).update_filename(request, filename, *args, **kwargs)
+class CouponUploadBackend(DefaultUploadBackend):
 
     def upload_complete(self, request, filename, *args, **kwargs):
         path = self.UPLOAD_DIR + "/" + filename
@@ -377,6 +378,9 @@ class CouponUploadBackend(LocalUploadBackend):
                     if not os.path.exists(dir):
                         os.makedirs(dir)
                     coupon.image.save(destination, content)
+                    destination2_folder = ikwen_settings.MEDIA_ROOT + coupon.UPLOAD_TO
+                    if not os.path.exists(destination2_folder):
+                        os.makedirs(destination2_folder)
                     destination2 = destination.replace(media_root, ikwen_settings.MEDIA_ROOT)
                     os.rename(destination, destination2)
                     url = media_url + coupon.image.name

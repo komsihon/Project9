@@ -29,17 +29,18 @@ def reward_member(service, member, type, **kwargs):
             *coupon*: Coupon being donated to the Member
             *count*: number of coupon given
 
-    :return: A list of JoinRewardPack or PaymentRewardPack
+    :return: A tuple (list of JoinRewardPack or PaymentRewardPack, total_coupon_count)
     """
     now = datetime.now()
     try:
         # All rewarding actions are run only if
         # Operator has an active profile.
-        CROperatorProfile.objects.using(UMBRELLA).get(service=service, expiry__gt=now, is_active=True)
+        CROperatorProfile.objects.using(UMBRELLA).get(service=service, is_active=True)
     except CROperatorProfile.DoesNotExist:
-        return
+        return None, 0
     reward_pack = None
     reward_pack_list = []
+    coupon_count = 0
     service = Service.objects.using(UMBRELLA).get(pk=service.id)
     member = Member.objects.using(UMBRELLA).get(pk=member.id)
     profile, update = CRProfile.objects.get_or_create(member=member)
@@ -47,7 +48,8 @@ def reward_member(service, member, type, **kwargs):
     if type == Reward.JOIN:
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
-                reward_pack = JoinRewardPack.objects.using(UMBRELLA).get(service=service, coupon=coupon)
+                reward_pack = JoinRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                    .get(service=service, coupon=coupon)
                 if reward_pack.count > 0:
                     reward_pack_list.append(reward_pack)
                     cumul, update = CumulatedCoupon.objects.using(UMBRELLA).get_or_create(member=member, coupon=coupon)
@@ -56,6 +58,7 @@ def reward_member(service, member, type, **kwargs):
                     Reward.objects.using(UMBRELLA).create(service=service, member=member, coupon=coupon,
                                                           count=reward_pack.count, type=Reward.JOIN, status=Reward.SENT)
                     coupon_summary.count += reward_pack.count
+                    coupon_count += reward_pack.count
                     if cumul.count >= coupon.heap_size:
                         CouponWinner.objects.using(UMBRELLA).create(member=member, coupon=coupon)
                         coupon_summary.threshold_reached = True
@@ -69,7 +72,8 @@ def reward_member(service, member, type, **kwargs):
     elif type == Reward.REFERRAL:
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
-                reward_pack = ReferralRewardPack.objects.using(UMBRELLA).get(service=service, coupon=coupon)
+                reward_pack = ReferralRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                    .get(service=service, coupon=coupon)
                 if reward_pack.count > 0:
                     reward_pack_list.append(reward_pack)
                     cumul, update = CumulatedCoupon.objects.using(UMBRELLA).get_or_create(member=member, coupon=coupon)
@@ -82,6 +86,7 @@ def reward_member(service, member, type, **kwargs):
                         CouponWinner.objects.using(UMBRELLA).create(member=member, coupon=coupon)
                         coupon_summary.threshold_reached = True
                     profile.coupon_score += reward_pack.count * coupon.coefficient
+                    coupon_count += reward_pack.count
             except ReferralRewardPack.DoesNotExist:
                 continue
         else:
@@ -94,8 +99,8 @@ def reward_member(service, member, type, **kwargs):
         model_name = kwargs.pop('model_name')
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
-                reward_pack = PaymentRewardPack.objects.using(UMBRELLA).get(service=service, coupon=coupon,
-                                                                            floor__lt=amount, ceiling__gte=amount)
+                reward_pack = PaymentRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                    .get(service=service, coupon=coupon, floor__lt=amount, ceiling__gte=amount)
                 if reward_pack.count > 0:
                     reward_pack_list.append(reward_pack)
                     cumul, update = CumulatedCoupon.objects.using(UMBRELLA).get_or_create(member=member, coupon=coupon)
@@ -110,6 +115,7 @@ def reward_member(service, member, type, **kwargs):
                         coupon_summary.threshold_reached = True
                     coupon_summary.save()
                     profile.coupon_score += reward_pack.count * coupon.coefficient
+                    coupon_count += reward_pack.count
             except PaymentRewardPack.DoesNotExist:
                 continue
         else:
@@ -134,7 +140,7 @@ def reward_member(service, member, type, **kwargs):
         add_event(service, MANUAL_REWARD_OFFERED, member)
     profile.save()
     coupon_summary.save()
-    return reward_pack_list
+    return reward_pack_list, coupon_count
 
 
 def get_last_reward(member, service):

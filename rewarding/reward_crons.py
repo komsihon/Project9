@@ -50,7 +50,9 @@ def offer_free_coupon(service, member, profile, coupon, cumul):
 
 
 def get_remaining_days_in_month():
-    next_month = (now.month + 1) % 12
+    next_month = now.month + 1
+    if next_month > 12:
+        next_month = next_month % 12
     year = now.year if now.month < 12 else now.year + 1
     first_of_next_month = datetime(year, next_month, 1)
     return (first_of_next_month - now).days
@@ -217,7 +219,7 @@ def send_free_rewards():
         member = reward.member
         if member in member_list:
             continue
-        reward_qs = Reward.objects.filter(member=member, status=Reward.PREPARED)
+        reward_qs = Reward.objects.select_related('coupon, member').filter(member=member, status=Reward.PREPARED)
         reward_count = reward_qs.count()
         last_reward = reward_qs.order_by('-id')[0]
         diff = t0 - last_reward.created_on
@@ -241,7 +243,8 @@ def send_free_rewards():
                     activate('en')
                 subject = _("Free coupons are waiting for you")
                 html_content = get_mail_content(subject, '', template_name='rewarding/mails/free_reward.html',
-                                                extra_context={'grouped_rewards': grouped_rewards})
+                                                extra_context={'member_name': member.first_name,
+                                                               'grouped_rewards': grouped_rewards})
                 sender = 'ikwen <no-reply@ikwen.com>'
                 msg = EmailMessage(subject, html_content, sender, [member.email])
                 msg.content_subtype = "html"

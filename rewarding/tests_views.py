@@ -76,7 +76,7 @@ class RewardingViewsTestCase(unittest.TestCase):
         response = self.client.get(reverse('rewarding:configuration'), {'action': 'activate'})
         self.assertEqual(response.status_code, 302)
         service = get_service_instance()
-        cr_profile = CROperatorProfile.objects.using(UMBRELLA).get(service=service)
+        CROperatorProfile.objects.using(UMBRELLA).get(service=service)
 
     @override_settings(IKWEN_SERVICE_ID='56eb6d04b37b3379b531b102', UNIT_TESTING=True)
     def test_Configuration_delete_coupon(self):
