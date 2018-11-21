@@ -163,9 +163,11 @@ class Configuration(TemplateView):
             ReferralRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
         if len(rewards['referral']) > 0:
             service = Service.objects.using(UMBRELLA).get(pk=service_id)
-            Revival.objects.using(UMBRELLA)\
+            revival, update = Revival.objects.using(UMBRELLA)\
                 .get_or_create(service=service, model_name='core.Service', object_id=service.id,
                                mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
+            revival.is_active = True
+            revival.save()
         else:
             Revival.objects.using(UMBRELLA)\
                 .filter(service=service, model_name='core.Service', object_id=service.id,
