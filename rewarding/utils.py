@@ -8,6 +8,9 @@ from ikwen.accesscontrol.models import Member
 from ikwen.rewarding.models import Coupon, JoinRewardPack, CumulatedCoupon, PaymentRewardPack, Reward, CouponSummary, \
     CouponUse, CRProfile, CouponWinner, WELCOME_REWARD_OFFERED, PAYMENT_REWARD_OFFERED, CROperatorProfile, \
     REFERRAL_REWARD_OFFERED, MANUAL_REWARD_OFFERED, ReferralRewardPack
+from ikwen.revival.models import MemberProfile
+
+REFERRAL = '__Referral'
 
 
 def reward_member(service, member, type, **kwargs):
@@ -218,3 +221,22 @@ def donate_coupon(donor, receiver, coupon, count, object_id):
     if receiver_cumul.count >= coupon.heap_size:
         receiver_summary.threshold_reached = True
     receiver_summary.save()
+
+
+def add_referral_tag_to_member_profiles():
+    """
+    Adds the auto ProfileTag with name '__referral' to all MemberProfiles.
+    This causes the Member to be candidate to receive the revival
+    mail suggesting them to refer the website to a friend and earn coupons.
+    """
+    member_queryset = Member.objects.all()
+    total = member_queryset.count()
+    chunks = total / 500 + 1
+    for i in range(chunks):
+        start = i * 500
+        finish = (i + 1) * 500
+        for member in member_queryset[start:finish]:
+            member_profile, update = MemberProfile.objects.get_or_create(member=member)
+            if REFERRAL not in member_profile.tag_list:
+                member_profile.tag_list.append(REFERRAL)
+                member_profile.save()

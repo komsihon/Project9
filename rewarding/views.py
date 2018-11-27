@@ -23,10 +23,12 @@ from ikwen.core.models import Service
 from ikwen.core.utils import get_service_instance, get_model_admin_instance, DefaultUploadBackend
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import ChangeObjectBase
-from ikwen.revival.models import Revival
+from ikwen.revival.models import Revival, ProfileTag, ObjectProfile
 from ikwen.rewarding.models import Coupon, JoinRewardPack, PaymentRewardPack, CRBillingPlan, CROperatorProfile, \
     CouponWinner, Reward, ReferralRewardPack
 from ikwen.rewarding.admin import CouponAdmin
+
+from ikwen.rewarding.utils import REFERRAL
 
 CONTINUOUS_REWARDING = 'Continuous Rewarding'
 
@@ -168,6 +170,9 @@ class Configuration(TemplateView):
                                mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
             revival.is_active = True
             revival.save()
+            tag = REFERRAL
+            ProfileTag.objects.get_or_create(name=tag, slug=tag, is_auto=True)
+            ObjectProfile.objects.get_or_create(model_name='core.Service', object_id=service.id, tag_list=[tag])
         else:
             Revival.objects.using(UMBRELLA)\
                 .filter(service=service, model_name='core.Service', object_id=service.id,
@@ -246,7 +251,7 @@ class ChangeCoupon(ChangeObjectBase):
         context = super(ChangeCoupon, self).get_context_data(**kwargs)
         context['verbose_name_plural'] = CONTINUOUS_REWARDING
         service = get_service_instance()
-        coupon_list = Coupon.objects.using(UMBRELLA).filter(service=service)
+        coupon_list = list(Coupon.objects.using(UMBRELLA).filter(service=service))
         winner_list = set([obj.member
                            for obj in CouponWinner.objects.using(UMBRELLA).filter(coupon__in=coupon_list, collected=False)])
         context['winner_list'] = winner_list

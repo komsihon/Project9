@@ -2,42 +2,31 @@
 # -*- coding: utf-8 -*-
 
 import os
+import logging
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conf.settings")
 
 from django.db.models import Q
 from datetime import datetime, timedelta
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.core import mail
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.module_loading import import_by_path
-from django.utils.log import AdminEmailHandler
 from django.utils.translation import gettext as _
-from ikwen.accesscontrol.models import SUDO
 
-from ikwen.core.models import Config, QueuedSMS, Service
-from ikwen.core.utils import get_service_instance, send_sms, add_event
+from ikwen.core.utils import get_service_instance, add_event
 from ikwen.core.utils import get_mail_content
-from ikwen.billing.models import Invoice, InvoicingConfig, INVOICES_SENT_EVENT, \
-    NEW_INVOICE_EVENT, INVOICE_REMINDER_EVENT, REMINDERS_SENT_EVENT, OVERDUE_NOTICE_EVENT, OVERDUE_NOTICES_SENT_EVENT, \
-    SUSPENSION_NOTICES_SENT_EVENT, SERVICE_SUSPENDED_EVENT, SendingReport, IkwenInvoiceItem, InvoiceEntry
+from ikwen.billing.models import Invoice, InvoicingConfig, NEW_INVOICE_EVENT, INVOICE_REMINDER_EVENT,\
+    OVERDUE_NOTICE_EVENT, SERVICE_SUSPENDED_EVENT, IkwenInvoiceItem, InvoiceEntry
 from ikwen.billing.utils import get_invoice_generated_message, get_invoice_reminder_message, \
-    get_invoice_overdue_message, \
-    get_service_suspension_message, get_next_invoice_number, get_subscription_model, get_billing_cycle_months_count, \
-    pay_with_wallet_balance
-from ikwen.partnership.models import ApplicationRetailConfig
-from ikwen.rewarding.models import CROperatorProfile
+    get_invoice_overdue_message, get_service_suspension_message, get_next_invoice_number, get_subscription_model, \
+    get_billing_cycle_months_count, pay_with_wallet_balance
 
-import logging.handlers
-logger = logging.getLogger('ikwen.rewarding')
-f = logging.Formatter('%(levelname)-10s %(asctime)-27s %(message)s')
-email_handler = AdminEmailHandler()
-email_handler.setLevel(logging.ERROR)
-email_handler.setFormatter(f)
-logger.addHandler(email_handler)
+from ikwen.core.log import CRONS_LOGGING
+logging.config.dictConfig(CRONS_LOGGING)
+logger = logging.getLogger('ikwen.crons')
 
 Subscription = get_subscription_model()
 

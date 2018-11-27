@@ -3,6 +3,7 @@
 
 import os
 import random
+import logging
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ikwen.conf.settings")
 
@@ -21,8 +22,9 @@ from ikwen.rewarding.models import CROperatorProfile, Reward, Coupon, CRProfile,
     CouponSummary, CouponWinner, FREE_REWARD_OFFERED
 from ikwen.rewarding.utils import get_last_reward
 
-import logging.handlers
-logger = logging.getLogger('ikwen.rewarding')
+from ikwen.core.log import CRONS_LOGGING
+logging.config.dictConfig(CRONS_LOGGING)
+logger = logging.getLogger('ikwen.crons')
 
 
 # CRITICAL_LIMIT = getattr(settings, 'FREE_COUPON_CRITICAL_LIMIT', 75)  # Above this limit we add more free coupons very carefully
