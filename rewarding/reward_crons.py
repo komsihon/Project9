@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import random
 import logging
 
@@ -34,6 +35,7 @@ logger = logging.getLogger('ikwen.crons')
 # MAX_NRM_DAYS = getattr(settings, 'CR_MAX_NRM_DAYS', 3)  # NRM: No Rewarding Mail
 
 now = datetime.now()  # Reference time for the whole script
+DEBUG = False
 
 
 def offer_free_coupon(service, member, profile, coupon, cumul):
@@ -129,7 +131,12 @@ def prepare_free_rewards():
         for i in range(chunks):
             start = i * 500
             finish = (i + 1) * 500
-            for member in Member.objects.using(db).all()[start:finish]:
+            if DEBUG:
+                # Process only superusers in debug mode
+                member_queryset = Member.objects.using(db).filter(is_superuser=True)
+            else:
+                member_queryset = Member.objects.using(db)
+            for member in member_queryset[start:finish]:
                 profile, update = CRProfile.objects.using(db).get_or_create(member=member)
                 last_reward = get_last_reward(member, service)
                 if not last_reward and never_rewarded_count < N:
@@ -162,6 +169,8 @@ def prepare_free_rewards():
         for profile in CRProfile.objects.using(db).filter(last_reward_date__lte=two_days_back).order_by('reward_score', 'coupon_score', 'last_reward_date')[:n]:
             member = profile.member
             member_u = Member.objects.get(pk=member.id)  # Member from umbrella database
+            if DEBUG and not member.is_superuser:
+                continue  # Process only superusers in debug mode
             for coupon in coupon_list:
                 if i in coupon.winning_indexes:
                     cumul, update = CumulatedCoupon.objects.get_or_create(member=member_u, coupon=coupon)
@@ -279,6 +288,10 @@ def send_free_rewards():
 
 if __name__ == "__main__":
     try:
+        try:
+            DEBUG = sys.argv[1] == 'debug'
+        except IndexError:
+            DEBUG = False
         yesterday = now - timedelta(days=1)
         if yesterday.month != now.month:
             Coupon.objects.update(month_winners=0)

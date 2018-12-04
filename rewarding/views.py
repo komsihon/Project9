@@ -136,10 +136,10 @@ class Configuration(TemplateView):
 
     def save_rewards_packs(self, request):
         rewards = json.loads(request.body)
-        service_id = getattr(settings, 'IKWEN_SERVICE_ID')
-        service = Service.objects.using(UMBRELLA).get(pk=service_id)
+        service = get_service_instance()
+        service_umbrella = Service.objects.using(UMBRELLA).get(pk=service.id)
         # Delete all previous set JoinRewards ...
-        JoinRewardPack.objects.using(UMBRELLA).filter(service=service).delete()
+        JoinRewardPack.objects.using(UMBRELLA).filter(service=service_umbrella).delete()
 
         # ... And set new ones
         for reward in rewards['join']:
@@ -149,10 +149,10 @@ class Configuration(TemplateView):
             except Coupon.DoesNotExist:
                 continue
             count = int(reward['count'])
-            JoinRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
+            JoinRewardPack.objects.using(UMBRELLA).create(service=service_umbrella, coupon=coupon, count=count)
 
         # Delete all previous set ReferralRewards ...
-        ReferralRewardPack.objects.using(UMBRELLA).filter(service=service).delete()
+        ReferralRewardPack.objects.using(UMBRELLA).filter(service=service_umbrella).delete()
 
         # ... And set new ones
         for reward in rewards['referral']:
@@ -162,24 +162,29 @@ class Configuration(TemplateView):
             except Coupon.DoesNotExist:
                 continue
             count = int(reward['count'])
-            ReferralRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon, count=count)
+            ReferralRewardPack.objects.using(UMBRELLA).create(service=service_umbrella, coupon=coupon, count=count)
         if len(rewards['referral']) > 0:
-            service = Service.objects.using(UMBRELLA).get(pk=service_id)
-            revival, update = Revival.objects.using(UMBRELLA)\
-                .get_or_create(service=service, model_name='core.Service', object_id=service.id,
+            revival, update = Revival.objects.\
+                get_or_create(service=service, model_name='core.Service', object_id=service.id,
+                              mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
+            revival_umbrella, update = Revival.objects.using(UMBRELLA)\
+                .get_or_create(id=revival.id, service=service_umbrella, model_name='core.Service', object_id=service_umbrella.id,
                                mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
-            revival.is_active = True
-            revival.save()
+            revival_umbrella.is_active = True
+            revival_umbrella.save()
             tag = REFERRAL
             ProfileTag.objects.get_or_create(name=tag, slug=tag, is_auto=True)
             ObjectProfile.objects.get_or_create(model_name='core.Service', object_id=service.id, tag_list=[tag])
         else:
-            Revival.objects.using(UMBRELLA)\
+            Revival.objects\
                 .filter(service=service, model_name='core.Service', object_id=service.id,
+                        mail_renderer='ikwen.revival.utils.render_suggest_referral_mail').update(is_active=False)
+            Revival.objects.using(UMBRELLA)\
+                .filter(service=service_umbrella, model_name='core.Service', object_id=service_umbrella.id,
                         mail_renderer='ikwen.revival.utils.render_suggest_referral_mail').update(is_active=False)
 
         # Delete all previous set PurchaseRewards ...
-        PaymentRewardPack.objects.using(UMBRELLA).filter(service=service).delete()
+        PaymentRewardPack.objects.using(UMBRELLA).filter(service=service_umbrella).delete()
 
         # Check to make sure intervals do not overlap
         intervals = rewards['payment']
@@ -207,7 +212,7 @@ class Configuration(TemplateView):
                 except Coupon.DoesNotExist:
                     continue
                 count = int(reward['count'])
-                PaymentRewardPack.objects.using(UMBRELLA).create(service=service, coupon=coupon,
+                PaymentRewardPack.objects.using(UMBRELLA).create(service=service_umbrella, coupon=coupon,
                                                                  floor=floor, ceiling=ceiling, count=count)
         return HttpResponse(json.dumps({'success': True}))
 
