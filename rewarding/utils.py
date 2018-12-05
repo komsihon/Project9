@@ -98,8 +98,8 @@ def reward_member(service, member, type, **kwargs):
             add_event(service, REFERRAL_REWARD_OFFERED, member)
     elif type == Reward.PAYMENT:
         amount = kwargs.pop('amount')
-        object_id = kwargs.pop('object_id')
-        model_name = kwargs.pop('model_name')
+        object_id = kwargs.pop('object_id', None)
+        model_name = kwargs.pop('model_name', None)
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
                 reward_pack = PaymentRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
