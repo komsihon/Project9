@@ -94,3 +94,78 @@
         </div>
     </div>
 </div>
+<div id="modal-login-to-refer" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modal-info">
+            <div class="modal-header no-border" style="padding-bottom: 0">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="color: #fff">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0">
+                <div class="text-center">
+                    <img alt="Welcome Img" src="{% static 'ikwen/img/cr-refer-friend.png' %}" class="img-responsive" />
+                </div>
+                <div class="speech text-center" style="color: #fff; font-size: 18px">
+                    {% blocktrans %}
+                        <p>Please login before you refer a friend. And be sure you receive your reward</p>
+                    {% endblocktrans %}
+                </div>
+                <div class="modal-footer no-border">
+                    <div class="actions reward-available row" style="margin-top: 0">
+                        <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                            <a href="{% url 'ikwen:sign_in' %}?next={{ request.META.PATH_INFO }}&do_refer=yes"
+                               class="btn btn-outline-white btn-block btn-sm">
+                                <img height="26" src="{% static 'ikwen/img/logo_ikwen_symbol_30x30.png' %}" />
+                                {% blocktrans %}Login with <strong>ikwen</strong>{% endblocktrans %}
+                            </a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal-refer-now" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modal-info">
+            <div class="modal-header no-border" style="padding-bottom: 0">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="color: #fff">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0">
+                <div class="speech text-center" style="color: #fff; margin: 90px 0 30px">
+                    {% blocktrans %}
+                        <h3 style="">Share now !</h3>
+                        <p>And get your reward</p>
+                    {% endblocktrans %}
+                </div>
+                <ul class="social" style="padding: 0">
+                    <li data-dismiss="modal">
+                        <a href="javascript:;" data-toggle="modal" data-target="#whatsapp-share"
+                           class="wsap-link" data-url="{{ url }}">
+                            <i class="fab fa-whatsapp"></i>
+                            <span class="sr-only">WhatsApp</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://facebook.com/sharer/sharer.php?u={{ url }}"
+                           class="fb-link" target="_blank">
+                            <i class="fab fa-facebook"></i>
+                            <span class="sr-only">Facebook</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/home?status={{ url }}"
+                           class="twtr-link" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                            <span class="sr-only">Twitter</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
