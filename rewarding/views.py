@@ -25,7 +25,7 @@ from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import ChangeObjectBase
 from ikwen.revival.models import Revival, ProfileTag, ObjectProfile
 from ikwen.rewarding.models import Coupon, JoinRewardPack, PaymentRewardPack, CRBillingPlan, CROperatorProfile, \
-    CouponWinner, Reward, ReferralRewardPack
+    CouponWinner, Reward, ReferralRewardPack, WELCOME_REWARD_OFFERED, FREE_REWARD_OFFERED, REFERRAL_REWARD_OFFERED
 from ikwen.rewarding.admin import CouponAdmin
 
 from ikwen.rewarding.utils import REFERRAL
@@ -423,9 +423,18 @@ class CouponUploadBackend(DefaultUploadBackend):
 upload_coupon_image = AjaxFileUploader(CouponUploadBackend)
 
 
-def render_welcome_reward_offer_event(event, request):
-    reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.JOIN, member=event.member)
-    html_template = get_template('rewarding/events/welcome_reward_offer.html')
+def render_reward_offered_event(event, request):
+    event_type = event.event_type
+    if event_type.codename == WELCOME_REWARD_OFFERED:
+        reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.JOIN, member=event.member)
+    elif event_type.codename == FREE_REWARD_OFFERED:
+        reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.FREE, member=event.member)
+    elif event_type.codename == REFERRAL_REWARD_OFFERED:
+        reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.REFERRAL, member=event.member)
+    else:
+        reward_list = Reward.objects.using(UMBRELLA).filter(type=Reward.MANUAL, member=event.member)
+
+    html_template = get_template('rewarding/events/reward_offered.html')
     entries_count = len(reward_list)
     more_entries = entries_count - 3  # Number to show on the "View more" button
     total_coupon = 0

@@ -20,7 +20,7 @@ from ikwen.core.utils import get_service_instance, add_event, set_counters, add_
 from ikwen.core.utils import get_mail_content, increment_history_field
 
 from ikwen.rewarding.models import CROperatorProfile, Reward, Coupon, CRProfile, JoinRewardPack, CumulatedCoupon, \
-    CouponSummary, CouponWinner, FREE_REWARD_OFFERED
+    CouponSummary, CouponWinner, FREE_REWARD_OFFERED, WELCOME_REWARD_OFFERED
 from ikwen.rewarding.utils import get_last_reward
 
 from ikwen.core.log import CRONS_LOGGING
@@ -252,7 +252,10 @@ def send_free_rewards():
                 project_name_list.append(service.project_name)
                 summary.append(val)
             summary = ' - '.join(summary)
-            add_event(ikwen_service, FREE_REWARD_OFFERED, member=member, )
+            if last_reward.type == Reward.JOIN:
+                add_event(ikwen_service, WELCOME_REWARD_OFFERED, member=member, )
+            else:
+                add_event(ikwen_service, FREE_REWARD_OFFERED, member=member, )
             if member.email:
                 if member.language:
                     activate(member.language)
