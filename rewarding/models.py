@@ -375,8 +375,9 @@ def add_referral_tag_to_member_profile(sender, **kwargs):
         member = kwargs.pop('instance')
         from ikwen.rewarding.utils import REFERRAL
         member_profile, update = MemberProfile.objects.get_or_create(member=member)
-        member_profile.tag_list.append(REFERRAL)
-        member_profile.save()
+        if REFERRAL not in member_profile.tag_list:
+            member_profile.tag_list.append(REFERRAL)
+            member_profile.save()
 
 
 post_save.connect(purge_coupon, dispatch_uid="coupon_post_save_id")
