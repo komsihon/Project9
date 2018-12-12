@@ -223,6 +223,14 @@ def donate_coupon(donor, receiver, coupon, count, object_id):
     receiver_summary.save()
 
 
+def get_coupon_summary_list(member):
+    member_services = member.get_services()
+    active_operators = CROperatorProfile.objects.filter(service__in=member_services, is_active=True)
+    active_cr_services = [op.service for op in active_operators]
+    coupon_summary_list = member.couponsummary_set.filter(service__in=active_cr_services)
+    return coupon_summary_list
+
+
 def add_referral_tag_to_member_profiles():
     """
     Adds the auto ProfileTag with name '__referral' to all MemberProfiles.
