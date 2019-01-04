@@ -126,7 +126,7 @@ def prepare_free_rewards():
 
         # Processing members in a Member.objects.all() may cause
         # segmentation_fault() error. So split into chunks of 500
-        total = Member.objects.using(db).all().count()
+        total = Member.objects.using(db).filter(is_ghost=False).count()
         chunks = total / 500 + 1
         for i in range(chunks):
             start = i * 500

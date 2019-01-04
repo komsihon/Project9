@@ -373,6 +373,8 @@ def add_referral_tag_to_member_profile(sender, **kwargs):
         return
     if not getattr(settings, 'UNIT_TESTING', False):
         member = kwargs.pop('instance')
+        if member.is_ghost:
+            return
         from ikwen.rewarding.utils import REFERRAL
         member_profile, update = MemberProfile.objects.get_or_create(member=member)
         if REFERRAL not in member_profile.tag_list:

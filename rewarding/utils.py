@@ -10,6 +10,7 @@ from ikwen.rewarding.models import Coupon, JoinRewardPack, CumulatedCoupon, Paym
     REFERRAL_REWARD_OFFERED, MANUAL_REWARD_OFFERED, ReferralRewardPack
 from ikwen.revival.models import MemberProfile
 
+JOIN = '__Join'
 REFERRAL = '__Referral'
 
 
@@ -248,3 +249,31 @@ def add_referral_tag_to_member_profiles():
             if REFERRAL not in member_profile.tag_list:
                 member_profile.tag_list.append(REFERRAL)
                 member_profile.save()
+
+
+def get_join_reward_pack_list(revival):
+    service = revival.service
+    reward_pack_list = []
+    for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, is_active=True, status=Coupon.APPROVED):
+        try:
+            reward_pack = JoinRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                .get(service=service, coupon=coupon)
+            if reward_pack.count > 0:
+                reward_pack_list.append(reward_pack)
+        except JoinRewardPack.DoesNotExist:
+            continue
+    return {'reward_pack_list': reward_pack_list}
+
+
+def get_referral_reward_pack_list(revival):
+    service = revival.service
+    reward_pack_list = []
+    for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, is_active=True, status=Coupon.APPROVED):
+        try:
+            reward_pack = ReferralRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                .get(service=service, coupon=coupon)
+            if reward_pack.count > 0:
+                reward_pack_list.append(reward_pack)
+        except ReferralRewardPack.DoesNotExist:
+            continue
+    return {'reward_pack_list': reward_pack_list}
