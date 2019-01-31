@@ -164,24 +164,24 @@ class Configuration(TemplateView):
             count = int(reward['count'])
             ReferralRewardPack.objects.using(UMBRELLA).create(service=service_umbrella, coupon=coupon, count=count)
 
-        tag = REFERRAL
+        ref_tag, update = ProfileTag.objects.get_or_create(name=REFERRAL, slug=REFERRAL, is_auto=True)
         if len(rewards['referral']) > 0:
             revival, update = Revival.objects.\
                 get_or_create(service=service, model_name='core.Service', object_id=service.id,
-                              tag=tag, mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
+                              profile_tag_id=ref_tag.id, mail_renderer='ikwen.revival.utils.render_suggest_referral_mail')
             revival_umbrella, update = Revival.objects.using(UMBRELLA)\
                 .get_or_create(id=revival.id, service=service_umbrella, model_name='core.Service', object_id=service_umbrella.id,
                                mail_renderer='ikwen.revival.utils.render_suggest_referral_mail',
-                               tag=tag, get_kwargs='ikwen.rewarding.utils.get_referral_reward_pack_list')
+                               profile_tag_id=ref_tag.id, get_kwargs='ikwen.rewarding.utils.get_referral_reward_pack_list')
             revival_umbrella.is_active = True
             revival_umbrella.save()
-            ProfileTag.objects.get_or_create(name=tag, slug=tag, is_auto=True)
         else:
             Revival.objects\
-                .filter(service=service, model_name='core.Service', object_id=service.id, tag=tag,
+                .filter(service=service, model_name='core.Service', object_id=service.id, profile_tag_id=ref_tag.id,
                         mail_renderer='ikwen.revival.utils.render_suggest_referral_mail').update(is_active=False)
             Revival.objects.using(UMBRELLA)\
-                .filter(service=service_umbrella, model_name='core.Service', object_id=service_umbrella.id, tag=tag,
+                .filter(service=service_umbrella, model_name='core.Service',
+                        object_id=service_umbrella.id, profile_tag_id=ref_tag.id,
                         mail_renderer='ikwen.revival.utils.render_suggest_referral_mail').update(is_active=False)
 
         # Delete all previous set PurchaseRewards ...
