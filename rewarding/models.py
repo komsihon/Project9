@@ -12,8 +12,6 @@ from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.models import AbstractWatchModel, Model, Service
 from ikwen.core.utils import get_service_instance, to_dict
 from ikwen.accesscontrol.models import Member
-from ikwen.revival.models import MemberProfile
-
 
 WELCOME = 'Welcome'
 PURCHASE = 'Purchase'
@@ -63,7 +61,8 @@ class Coupon(AbstractWatchModel):
     heap_size = models.IntegerField(db_index=True, default=100,
                                     help_text="How many of this coupons must "
                                               "collected to obtain a concrete Ticket")
-    month_quota = models.IntegerField(help_text=_("How many people must win in the current month."))
+    month_quota = models.IntegerField(help_text=_("Number of random people the system will get to reach 100 coupons "
+                                                  "in the current month."))
     month_winners = models.IntegerField(default=0,
                                         help_text=_("How many winners there have been since the 1st of "
                                                     "the month."))
@@ -365,22 +364,4 @@ def purge_coupon(sender, **kwargs):
         Thread(target=clear_references, args=(instance,)).start()
 
 
-def add_referral_tag_to_member_profile(sender, **kwargs):
-    """
-    Adds the referral tag to all
-    """
-    if not (sender == Member and kwargs.pop('created')):  # Avoid unending recursive call and processing of existing Member
-        return
-    if not getattr(settings, 'UNIT_TESTING', False):
-        member = kwargs.pop('instance')
-        if member.is_ghost:
-            return
-        from ikwen.rewarding.utils import REFERRAL
-        member_profile, update = MemberProfile.objects.get_or_create(member=member)
-        if REFERRAL not in member_profile.tag_list:
-            member_profile.tag_list.append(REFERRAL)
-            member_profile.save()
-
-
 post_save.connect(purge_coupon, dispatch_uid="coupon_post_save_id")
-post_save.connect(add_referral_tag_to_member_profile, dispatch_uid="member_add_referral_tag_post_save_id")
