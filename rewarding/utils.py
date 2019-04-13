@@ -232,8 +232,9 @@ def get_coupon_summary_list(member):
     return coupon_summary_list
 
 
-def get_join_reward_pack_list(revival):
-    service = revival.service
+def get_join_reward_pack_list(revival=None, service=None):
+    if revival:
+        service = revival.service
     reward_pack_list = []
     for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, is_active=True, status=Coupon.APPROVED):
         try:
