@@ -11,12 +11,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ikwen.conf.settings")
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core import mail
-from django.core.mail import EmailMessage
 from django.utils.translation import gettext as _, activate
 from ikwen.accesscontrol.models import Member
 
-from ikwen.core.models import Service
-from ikwen.core.utils import get_service_instance, add_event, set_counters, add_database
+from ikwen.core.models import Service, XEmailObject
+from ikwen.core.utils import get_service_instance, add_event, set_counters, add_database, XEmailMessage
 from ikwen.core.utils import get_mail_content, increment_history_field
 
 from ikwen.rewarding.models import CROperatorProfile, Reward, Coupon, CRProfile, JoinRewardPack, CumulatedCoupon, \
@@ -117,6 +116,8 @@ def prepare_free_rewards():
     for operator in CROperatorProfile.objects.filter(is_active=True):
         N = operator.plan.audience_size / 30
         service = operator.service
+        if service.status != Service.ACTIVE:
+            continue
         db = service.database
         add_database(db)
         never_rewarded_count = 0
@@ -268,8 +269,9 @@ def send_free_rewards():
                                                                'total_coupon': total_coupon, 'total_companies': total_companies,
                                                                'project_names': ','.join(project_name_list)})
                 sender = 'ikwen <no-reply@ikwen.com>'
-                msg = EmailMessage(subject, html_content, sender, [member.email])
+                msg = XEmailMessage(subject, html_content, sender, [member.email])
                 msg.content_subtype = "html"
+                msg.type = XEmailObject.REWARDING
                 try:
                     if msg.send():
                         mail_sent += 1

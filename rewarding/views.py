@@ -23,7 +23,7 @@ from ikwen.core.models import Service
 from ikwen.core.utils import get_service_instance, get_model_admin_instance, DefaultUploadBackend
 from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import ChangeObjectBase
-from ikwen.revival.models import Revival, ProfileTag, ObjectProfile
+from ikwen.revival.models import Revival, ProfileTag
 from ikwen.rewarding.models import Coupon, JoinRewardPack, PaymentRewardPack, CRBillingPlan, CROperatorProfile, \
     CouponWinner, Reward, ReferralRewardPack, WELCOME_REWARD_OFFERED, FREE_REWARD_OFFERED, REFERRAL_REWARD_OFFERED
 from ikwen.rewarding.admin import CouponAdmin
