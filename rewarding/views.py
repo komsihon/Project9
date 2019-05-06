@@ -267,7 +267,7 @@ class ChangeCoupon(ChangeObjectBase):
         action = request.GET.get('action')
         if action == 'delete_image':
             object_id = kwargs.get('object_id')
-            obj = get_object_or_404(self.model, pk=object_id)
+            obj = Coupon.objects.using(UMBRELLA).get(pk=object_id)
             image_field_name = request.GET.get('image_field_name', 'image')
             image_field = obj.__getattribute__(image_field_name)
             if image_field.name:
