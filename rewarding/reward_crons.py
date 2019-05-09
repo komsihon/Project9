@@ -6,16 +6,19 @@ import sys
 import random
 import logging
 
+sys.path.append("/home/libran/virtualenv/lib/python2.7/site-packages")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ikwen.conf.settings")
 
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core import mail
+from django.core.mail import EmailMessage
 from django.utils.translation import gettext as _, activate
-from ikwen.accesscontrol.models import Member
 
+from ikwen.accesscontrol.backends import ARCH_EMAIL
+from ikwen.accesscontrol.models import Member
 from ikwen.core.models import Service, XEmailObject
-from ikwen.core.utils import get_service_instance, add_event, set_counters, add_database, XEmailMessage
+from ikwen.core.utils import get_service_instance, add_event, set_counters, add_database
 from ikwen.core.utils import get_mail_content, increment_history_field
 
 from ikwen.rewarding.models import CROperatorProfile, Reward, Coupon, CRProfile, JoinRewardPack, CumulatedCoupon, \
@@ -169,7 +172,12 @@ def prepare_free_rewards():
         i = 0
         for profile in CRProfile.objects.using(db).filter(last_reward_date__lte=two_days_back).order_by('reward_score', 'coupon_score', 'last_reward_date')[:n]:
             member = profile.member
-            member_u = Member.objects.get(pk=member.id)  # Member from umbrella database
+            if member.email == ARCH_EMAIL:
+                continue
+            try:
+                member_u = Member.objects.get(pk=member.id)  # Member from umbrella database
+            except Member.DoesNotExist:
+                continue
             if DEBUG and not member.is_superuser:
                 continue  # Process only superusers in debug mode
             for coupon in coupon_list:
@@ -267,13 +275,20 @@ def send_free_rewards():
                                                 extra_context={'member_name': member.first_name,
                                                                'grouped_rewards': grouped_rewards,
                                                                'total_coupon': total_coupon, 'total_companies': total_companies,
-                                                               'project_names': ','.join(project_name_list)})
+                                                               'project_names': ', '.join(project_name_list)})
                 sender = 'ikwen <no-reply@ikwen.com>'
-                msg = XEmailMessage(subject, html_content, sender, [member.email])
+                msg = EmailMessage(subject, html_content, sender, [member.email])
                 msg.content_subtype = "html"
-                msg.type = XEmailObject.REWARDING
                 try:
                     if msg.send():
+                        for service, reward_list in grouped_rewards.items():
+                            db = service.database
+                            add_database(db)
+                            service_original = Service.objects.using(db).get(pk=service.id)
+                            XEmailObject.objects.using(db).create(to=member.email, subject=subject, body=html_content,
+                                                                  type=XEmailObject.REWARDING, status="OK")
+                            set_counters(service_original)
+                            increment_history_field(service_original, 'rewarding_email_history')
                         mail_sent += 1
                         logger.debug(u"Free reward sent to %s: %s. %s" % (member.username, member.email, summary))
                     else:
@@ -304,7 +319,7 @@ def send_free_rewards():
 #     Cron job that revive users for pending 100 coupons
 #     """
 #     t0 = datetime.now()
-#     total_revival, total_mail = 0, 0
+#     total_revival, total_mail = 0, 0coupon.i
 #     total = CouponSummary.objects.filter(threshold_reached=True).count()
 #     chunks = total / 500
 #     for i in range(chunks):
@@ -334,7 +349,7 @@ def send_free_rewards():
 #                 profile, update = CRProfile.objects.using(db).get_or_create(member=member)
 #                 last_reward = get_last_reward(member, service)
 #
-#         balance = Balance.objects.using(WALLETS_DB_ALIAS).get(service_id=service.id)
+#         balance = Balance.objects.using(WALLETS_DB_ALIAS).gcoupon.iet(service_id=service.id)
 #         if balance.mail_count == 0:
 #             notify_for_empty_messaging_credit(service, EMAIL)
 #             continue
