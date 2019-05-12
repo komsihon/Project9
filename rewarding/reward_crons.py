@@ -75,7 +75,7 @@ def group_rewards_by_service(member):
     service_list = []
     for service_id in member.customer_on_fk_list:
         try:
-            service_list.append(Service.objects.get(pk=service_id))
+            service_list.append(Service.objects.get(pk=service_id, status=Service.ACTIVE))
         except Service.DoesNotExist:
             pass
     for service in service_list:
@@ -83,6 +83,8 @@ def group_rewards_by_service(member):
         try:
             operator = CROperatorProfile.objects.get(service=service, is_active=True)
         except CROperatorProfile.DoesNotExist:
+            continue
+        if Coupon.objects.filter(service=service, status=Coupon.APPROVED, is_active=True).count() == 0:
             continue
         set_counters(operator)
         for coupon in Coupon.objects.filter(service=service, status=Coupon.APPROVED, is_active=True):
