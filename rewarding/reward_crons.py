@@ -47,7 +47,8 @@ def offer_free_coupon(service, member, profile, coupon, cumul):
     max_count = min(MAX_FREE, left) / coupon.coefficient
     min_count = min(MIN_FREE, max_count)
     count = random.randint(min_count, max_count)
-    reward, update = Reward.objects.get_or_create(service=service, member=member, coupon=coupon,
+    coupon_u = Coupon.objects.get(pk=coupon.id)  # Reload Coupon from umbrella to prevent DB Router error
+    reward, update = Reward.objects.get_or_create(service=service, member=member, coupon=coupon_u,
                                                   type=Reward.FREE, status=Reward.PREPARED)
     reward.count += count
     reward.save()
