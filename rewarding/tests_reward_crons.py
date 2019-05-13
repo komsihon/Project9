@@ -8,6 +8,7 @@ from django.test.utils import override_settings
 from django.utils import unittest
 
 from ikwen.core.utils import get_service_instance, add_database
+from ikwen.accesscontrol.backends import ARCH_EMAIL
 from ikwen.rewarding.tests_views import wipe_test_data
 from ikwen.rewarding.models import *
 from ikwen.rewarding.utils import *
@@ -77,7 +78,7 @@ class RewardingRewardingCronsTestCase(unittest.TestCase):
         add_database(db)
         last_reward_date = datetime.now() - timedelta(days=10)
         c1 = Coupon.objects.get(pk='593928184fc0c279dc0f73b1')
-        for member in Member.objects.all():
+        for member in Member.objects.exclude(email=ARCH_EMAIL):
             member_local = Member.objects.using(db).get(pk=member.id)
             CRProfile.objects.using(db).create(member=member_local, last_reward_date=last_reward_date)
             CumulatedCoupon.objects.create(member=member, coupon=c1, count=30)
@@ -87,7 +88,7 @@ class RewardingRewardingCronsTestCase(unittest.TestCase):
             member.save()
         prepare_free_rewards()
         send_free_rewards()
-        for member in Member.objects.using(db).all():
+        for member in Member.objects.using(db).exclude(email=ARCH_EMAIL):
             cr_profile = CRProfile.objects.using(db).get(member=member)
             self.assertEqual(cr_profile.reward_score, CRProfile.FREE_REWARD)
             reward = Reward.objects.get(service=service, member=member, status=Reward.SENT, type=Reward.FREE)
