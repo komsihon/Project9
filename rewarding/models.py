@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djangotoolbox.fields import ListField
 
+from ikwen.conf.settings import IKWEN_SERVICE_ID as UMBRELLA_SERVICE_ID
 from ikwen.accesscontrol.backends import UMBRELLA
 
 from ikwen.core.models import AbstractWatchModel, Model, Service
@@ -54,6 +55,8 @@ class Coupon(AbstractWatchModel):
     slug = models.SlugField(db_index=True)
     image = models.ImageField(upload_to=UPLOAD_TO, blank=True, null=True)
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
+    rate = models.IntegerField(default=0,
+                               help_text=_("Discount rate value if coupon is of type Discount."))
     status = models.CharField(max_length=30, choices=STATUS_CHOICES,
                               default=PENDING_FOR_APPROVAL, db_index=True)
     description = models.TextField()
@@ -92,7 +95,8 @@ class Coupon(AbstractWatchModel):
             self.coefficient = 2
         elif self.type == self.PURCHASE_ORDER:
             self.coefficient = 3
-        kwargs['using'] = UMBRELLA
+        if getattr(settings, 'IKWEN_SERVICE_ID') != UMBRELLA_SERVICE_ID:
+            kwargs['using'] = UMBRELLA
         super(Coupon, self).save(**kwargs)
 
     def to_dict(self):
