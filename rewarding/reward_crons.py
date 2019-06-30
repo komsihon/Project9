@@ -118,6 +118,7 @@ def prepare_free_rewards():
     Prepares rewards to be sent further
     """
     t0 = datetime.now()
+    remaining_days = get_remaining_days_in_month()
     for operator in CROperatorProfile.objects.filter(is_active=True):
         N = operator.plan.audience_size / 30
         service = operator.service
@@ -163,12 +164,15 @@ def prepare_free_rewards():
         # Add extra members to reach N people
         n = N - never_rewarded_count
         two_days_back = t0 - timedelta(days=2)
-        remaining_days = get_remaining_days_in_month()
         list_n = list(range(n))  # Generate a list of
         coupon_list = []
         for coupon in Coupon.objects.filter(service=service, status=Coupon.APPROVED, is_active=True):
             winners_count = coupon.month_quota - coupon.month_winners
-            winners_today = winners_count / remaining_days
+            if remaining_days == 0:
+                winners_today = winners_count
+            else:
+                winners_today = winners_count / remaining_days
+            winners_today = min(winners_today, len(list_n))
             coupon.winning_indexes = random.sample(list_n, winners_today)
             coupon_list.append(coupon)
         i = 0
