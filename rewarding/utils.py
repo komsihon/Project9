@@ -52,7 +52,7 @@ def reward_member(service, member, type, **kwargs):
     if type == Reward.JOIN:
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
-                reward_pack = JoinRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                reward_pack = JoinRewardPack.objects.using(UMBRELLA).select_related('service', 'coupon')\
                     .get(service=service, coupon=coupon)
                 if reward_pack.count > 0:
                     reward_pack_list.append(reward_pack)
@@ -76,7 +76,7 @@ def reward_member(service, member, type, **kwargs):
     elif type == Reward.REFERRAL:
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
-                reward_pack = ReferralRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                reward_pack = ReferralRewardPack.objects.using(UMBRELLA).select_related('service', 'coupon')\
                     .get(service=service, coupon=coupon)
                 if reward_pack.count > 0:
                     reward_pack_list.append(reward_pack)
@@ -103,7 +103,7 @@ def reward_member(service, member, type, **kwargs):
         model_name = kwargs.pop('model_name', None)
         for coupon in Coupon.objects.using(UMBRELLA).filter(service=service):
             try:
-                reward_pack = PaymentRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+                reward_pack = PaymentRewardPack.objects.using(UMBRELLA).select_related('service', 'coupon')\
                     .get(service=service, coupon=coupon, floor__lt=amount, ceiling__gte=amount)
                 if reward_pack.count > 0:
                     reward_pack_list.append(reward_pack)
@@ -238,7 +238,7 @@ def get_join_reward_pack_list(revival=None, service=None):
     reward_pack_list = []
     for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, is_active=True, status=Coupon.APPROVED):
         try:
-            reward_pack = JoinRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+            reward_pack = JoinRewardPack.objects.using(UMBRELLA).select_related('service', 'coupon')\
                 .get(service=service, coupon=coupon)
             if reward_pack.count > 0:
                 reward_pack_list.append(reward_pack)
@@ -252,7 +252,7 @@ def get_referral_reward_pack_list(revival):
     reward_pack_list = []
     for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, is_active=True, status=Coupon.APPROVED):
         try:
-            reward_pack = ReferralRewardPack.objects.using(UMBRELLA).select_related('service, coupon')\
+            reward_pack = ReferralRewardPack.objects.using(UMBRELLA).select_related('service', 'coupon')\
                 .get(service=service, coupon=coupon)
             if reward_pack.count > 0:
                 reward_pack_list.append(reward_pack)

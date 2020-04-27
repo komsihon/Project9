@@ -1,19 +1,42 @@
 {% load i18n static %}
 <div class="cr-join-widget">
-    <p style="margin: 15px 0 25px; text-align: center">{% blocktrans %}
-        <strong>{{ profile_name }} has some free coupons for you.</strong>
-        To collect them, join {{ profile_name }} on ikwen today.
-    {% endblocktrans %}</p>
+    {% if referrer %}
+        <p style="margin: 15px 0 10px; text-align: center">{% blocktrans %}
+            <strong>{{ referrer.full_name }}</strong> is inviting on {{ profile_name }}.
+        {% endblocktrans %}</p>
+        {% if coupon_list %}
+            <p style="margin: 5px 0 25px; text-align: center">{% blocktrans %}
+                Join and earn some free coupons {{ profile_name }} on ikwen today.
+            {% endblocktrans %}</p>
+        {% endif %}
+    {% elif coupon_list %}
+        <p style="margin: 15px 0 25px; text-align: center">{% blocktrans %}
+            <strong>{{ profile_name }} has some free coupons for you.</strong>
+            To collect them, join {{ profile_name }} on ikwen today.
+        {% endblocktrans %}</p>
+    {% else %}
+        <p style="margin: 15px 0 25px; text-align: center">
+            {% blocktrans %}<strong>Join {{ profile_name }} on ikwen today.</strong>{% endblocktrans %}
+        </p>
+    {% endif %}
     <p class="text-center">
     {% if request.user.is_authenticated %}
         {% if not is_member %}
-            <button class="btn btn-sm btn-primary join-community" data-service-id="{{ page_service.id }}">
+            <button class="btn btn-green join-community" data-service-id="{{ page_service.id }}">
+                {% include 'core/snippets/button_spinner.html' %}
                 <img src="{% static 'ikwen/img/Join_button_white.svg' %}" height="15" style="margin: -4px 5px 0 0" />
                 Join
             </button>
+            <div class="join-successful">
+                <div> <i class="fa fa-check"></i> </div>
+                <div style="margin-top: 10px">
+                    <a class="btn btn-green" href="{{ page_service.url }}">{% blocktrans %}Visit {{ profile_name }}{% endblocktrans %}</a>
+                </div>
+            </div>
         {% endif %}
     {% else %}
-        <a class="btn btn-primary btn-sm join-community" href="{% url 'ikwen:sign_in' %}?join={{ page_service.project_name_slug }}{% if request.GET.referrer %}&referrer={{ request.GET.referrer }}{% endif %}">
+        <a class="btn btn-green join-community" href="{% url 'ikwen:sign_in' %}?join={{ page_service.project_name_slug }}{% if request.GET.referrer %}&referrer={{ request.GET.referrer }}{% endif %}">
+            {% include 'core/snippets/button_spinner.html' %}
             <img src="{% static 'ikwen/img/Join_button_white.svg' %}" height="15" style="margin: -4px 5px 0 0" />
             Join
         </a>
