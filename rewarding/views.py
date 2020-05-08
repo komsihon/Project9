@@ -10,13 +10,13 @@ from django.contrib import messages
 from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.template import Context
 from django.template.defaultfilters import slugify
 from django.template.loader import get_template
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, DetailView
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext as _
 
 from ikwen.conf import settings as ikwen_settings
 from ikwen.core.models import Service
@@ -49,26 +49,26 @@ class Configuration(TemplateView):
         context['plan_list'] = CRBillingPlan.objects.using(UMBRELLA).filter(is_active=True)
         payment_interval_list = []
         bound_list = set()
-        for reward in PaymentRewardPack.objects.using(UMBRELLA).filter(service=service):
+        for reward in PaymentRewardPack.objects.using(UMBRELLA).filter(service=service).order_by('floor'):
             bound_list.add((reward.floor, reward.ceiling))
         for item in bound_list:
             floor, ceiling = item[0], item[1]
             interval = {'floor': floor, 'ceiling': ceiling}
 
             coupon_list = []
-            for coupon in dc_coupon_list:
+            for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.DISCOUNT, deleted=False):
                 coupon.payment_reward = coupon.get_payment_reward_pack(floor, ceiling)
                 coupon_list.append(coupon)
             interval['dc_coupon_list'] = coupon_list
 
             coupon_list = []
-            for coupon in po_coupon_list:
+            for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.PURCHASE_ORDER, deleted=False):
                 coupon.payment_reward = coupon.get_payment_reward_pack(floor, ceiling)
                 coupon_list.append(coupon)
             interval['po_coupon_list'] = coupon_list
 
             coupon_list = []
-            for coupon in gift_coupon_list:
+            for coupon in Coupon.objects.using(UMBRELLA).filter(service=service, type=Coupon.GIFT, deleted=False):
                 coupon.payment_reward = coupon.get_payment_reward_pack(floor, ceiling)
                 coupon_list.append(coupon)
             interval['gift_coupon_list'] = coupon_list
@@ -331,9 +331,9 @@ class ChangeCoupon(ChangeObjectBase):
                         return {'error': 'File failed to upload. May be invalid or corrupted image file'}
             next_url = self.get_object_list_url(request, obj, *args, **kwargs)
             if object_id:
-                messages.success(request, obj._meta.verbose_name.capitalize() + ' <strong>' + str(obj).decode('utf8') + '</strong> ' + _('successfully updated'))
+                messages.success(request, u'%s <strong>%s</strong> %s' % (obj._meta.verbose_name.capitalize(), unicode(obj), _('successfully updated')))
             else:
-                messages.success(request, obj._meta.verbose_name.capitalize() + ' <strong>' + str(obj).decode('utf8') + '</strong> ' + _('successfully created'))
+                messages.success(request, u'%s <strong>%s</strong> %s' % (obj._meta.verbose_name.capitalize(), unicode(obj), _('successfully updated')))
             return HttpResponseRedirect(next_url)
         else:
             context = self.get_context_data(**kwargs)
