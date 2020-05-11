@@ -172,9 +172,11 @@ def prepare_free_rewards():
                 winners_today = winners_count
             else:
                 winners_today = winners_count / remaining_days
-            winners_today = min(winners_today, len(list_n))
+            winners_today = min(winners_today, n)
             coupon.winning_indexes = random.sample(list_n, winners_today)
             coupon_list.append(coupon)
+        if not coupon_list:
+            continue
         i = 0
         for profile in CRProfile.objects.using(db).filter(last_reward_date__lte=two_days_back).order_by('reward_score', 'coupon_score', 'last_reward_date')[:n]:
             member = profile.member
@@ -241,16 +243,16 @@ def send_free_rewards():
     member_list = set()
     reward_sent = 0
     mail_sent = 0
-    for reward in Reward.objects.select_related('coupon, member').filter(status=Reward.PREPARED):
+    for reward in Reward.objects.select_related('coupon', 'member').filter(status=Reward.PREPARED, count__gt=0):
         member = reward.member
         if member in member_list:
             continue
-        reward_qs = Reward.objects.filter(member=member, status=Reward.PREPARED)
+        reward_qs = Reward.objects.filter(member=member, status=Reward.PREPARED, count__gt=0)
         reward_count = reward_qs.count()
         last_reward = reward_qs.order_by('-id')[0]
         diff = t0 - last_reward.created_on
         MIN_FOR_SENDING = getattr(settings, 'CR_MIN_FOR_SENDING', 1)
-        MAX_NRM_DAYS = getattr(settings, 'CR_MAX_NRM_DAYS', 3)
+        MAX_NRM_DAYS = getattr(settings, 'CR_MAX_NRM_DAYS', 3)  # NRM = No Reward Message
         if reward_count >= MIN_FOR_SENDING or diff.days >= MAX_NRM_DAYS:
             member_list.add(member)
             grouped_rewards = group_rewards_by_service(member)
