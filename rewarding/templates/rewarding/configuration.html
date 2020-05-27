@@ -413,8 +413,8 @@
                                             <div class="bounds">
                                                 <div class="label label-success">
                                                     <strong>{{ CURRENCY.symbol }}</strong>
-                                                    <span class="floor" data-val="{{ interval.floor }}">{{ interval.floor }}</span> -
-                                                    <span class="ceiling" data-val="{{ interval.ceiling }}">{{ interval.ceiling }}</span>
+                                                    <span class="floor" data-val="{{ interval.floor }}">{{ interval.floor|intcomma }}</span> -
+                                                    <span class="ceiling" data-val="{{ interval.ceiling }}">{{ interval.ceiling|intcomma }}</span>
                                                 </div>
                                                 <a href="javascript:;" class="show-edit-bounds">{% trans "Edit" %}</a>
                                             </div>
@@ -450,7 +450,7 @@
                                                 <div class="coupon-group col-sm-6">
                                                     <h5 class="title">{% trans "Purchase Order" %}</h5>
                                                     <div>
-                                                        {% for coupon in po_coupon_list %}
+                                                        {% for coupon in interval.po_coupon_list %}
                                                             <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
                                                                 <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
                                                                 <div class="col-xs-4 col-sm-8">
@@ -465,7 +465,7 @@
                                                 <div class="coupon-group col-sm-6">
                                                     <h5 class="title">{% trans "Gift" %}</h5>
                                                     <div>
-                                                        {% for coupon in gift_coupon_list %}
+                                                        {% for coupon in interval.gift_coupon_list %}
                                                             <div class="form-group row reward" data-coupon-id="{{ coupon.id }}">
                                                                 <label for="pmt-{{ coupon.slug }}" class="col-xs-8 col-sm-4">{{ coupon.name }}</label>
                                                                 <div class="col-xs-4 col-sm-8">
