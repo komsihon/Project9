@@ -289,18 +289,27 @@ class ChangeCoupon(ChangeObjectBase):
     def post(self, request, *args, **kwargs):
         object_admin = get_model_admin_instance(self.model, self.model_admin)
         object_id = kwargs.get('object_id')
+        qs = Coupon.objects.using(UMBRELLA)
         if object_id:
             obj = self.get_object(**kwargs)
+            qs = qs.exclude(pk=obj.id)
         else:
             obj = self.model()
+        name_field_name = request.POST.get('name_field_name', 'name')
+        slug_field_name = request.POST.get('slug_field_name', 'slug')
+        name = request.POST.get(name_field_name)
+        slug = slugify(name)
+        found = qs.filter(**{slug_field_name: slug}).count()
+        if found:
+            context = self.get_context_data(**kwargs)
+            context['errors'] = _("A coupon with name %s already exists." % name)
+            return render(request, self.template_name, context)
         model_form = object_admin.get_form(request)
         form = model_form(request.POST, instance=obj)
         if form.is_valid():
             form.save()
-            slug_field_name = request.POST.get('slug_field_name', 'slug')
             try:
                 obj.__getattribute__(slug_field_name)
-                name_field_name = request.POST.get('name_field_name', 'name')
                 try:
                     name_field = obj.__getattribute__(name_field_name)
                     obj.__setattr__(slug_field_name, slugify(name_field))

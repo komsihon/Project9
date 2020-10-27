@@ -30,13 +30,16 @@ class Coupon(AbstractWatchModel):
     to obtain a concrete Ticket
     """
     UPLOAD_TO = 'rewarding/coupons'
+    MEDIA_UPLOAD_TO = 'rewarding/media'
     DISCOUNT = 'Discount'
     PURCHASE_ORDER = 'PurchaseOrder'
     GIFT = 'Gift'
+    DOWNLOAD = 'Download'
     TYPE_CHOICES = (
         (DISCOUNT, _("Discount")),
         (PURCHASE_ORDER, _("Purchase Order")),
         (GIFT, _("Gift")),
+        (DOWNLOAD, _("Download")),
     )
 
     PENDING_FOR_APPROVAL = 'PendingForApproval'
@@ -54,6 +57,8 @@ class Coupon(AbstractWatchModel):
                             help_text=_("Name of the coupon"))
     slug = models.SlugField(db_index=True)
     image = models.ImageField(upload_to=UPLOAD_TO, blank=True, null=True)
+    media = models.FileField(upload_to=MEDIA_UPLOAD_TO, blank=True, null=True, editable=False,
+                             help_text=_("If this coupon gives access to download a media, upload the media file."))
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
     rate = models.IntegerField(default=0,
                                help_text=_("Discount rate value if coupon is of type Discount."))
@@ -95,6 +100,8 @@ class Coupon(AbstractWatchModel):
             self.coefficient = 2
         elif self.type == self.PURCHASE_ORDER:
             self.coefficient = 3
+        elif self.type == self.DOWNLOAD:
+            self.coefficient = 4
         if getattr(settings, 'IKWEN_SERVICE_ID') != UMBRELLA_SERVICE_ID:
             kwargs['using'] = UMBRELLA
         super(Coupon, self).save(**kwargs)
