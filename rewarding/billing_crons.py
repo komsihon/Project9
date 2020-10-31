@@ -11,9 +11,9 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core import mail
 from django.core.mail import EmailMessage
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string as import_by_path
 from django.utils.translation import gettext as _
 
 from ikwen.core.utils import get_service_instance, add_event

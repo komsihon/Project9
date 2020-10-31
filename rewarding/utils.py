@@ -8,7 +8,6 @@ from ikwen.accesscontrol.models import Member
 from ikwen.rewarding.models import Coupon, JoinRewardPack, CumulatedCoupon, PaymentRewardPack, Reward, CouponSummary, \
     CouponUse, CRProfile, CouponWinner, WELCOME_REWARD_OFFERED, PAYMENT_REWARD_OFFERED, CROperatorProfile, \
     REFERRAL_REWARD_OFFERED, MANUAL_REWARD_OFFERED, ReferralRewardPack
-from ikwen.revival.models import MemberProfile, ProfileTag
 
 JOIN = '__Join'
 REFERRAL = '__Referral'

@@ -1,15 +1,14 @@
 from threading import Thread
 
 from django.conf import settings
-from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from djangotoolbox.fields import ListField
+
+from djongo import models
 
 from ikwen.conf.settings import IKWEN_SERVICE_ID as UMBRELLA_SERVICE_ID
 from ikwen.accesscontrol.backends import UMBRELLA
-
 from ikwen.core.models import AbstractWatchModel, Model, Service
 from ikwen.core.utils import get_service_instance, to_dict
 from ikwen.accesscontrol.models import Member
@@ -51,11 +50,10 @@ class Coupon(AbstractWatchModel):
         (REJECTED, _("Rejected")),
     )
 
-    service = models.ForeignKey(Service, default=get_service_instance,
-                                related_name='+')
+    service = models.ForeignKey(Service, default=get_service_instance, related_name='+', on_delete=models.CASCADE)
     name = models.CharField(max_length=60, db_index=True,
                             help_text=_("Name of the coupon"))
-    slug = models.SlugField(db_index=True)
+    slug = models.SlugField()
     image = models.ImageField(upload_to=UPLOAD_TO, blank=True, null=True)
     media = models.FileField(upload_to=MEDIA_UPLOAD_TO, blank=True, null=True, editable=False,
                              help_text=_("If this coupon gives access to download a media, upload the media file."))
@@ -77,7 +75,7 @@ class Coupon(AbstractWatchModel):
     is_active = models.BooleanField(default=True)
     deleted = models.BooleanField(default=False)
 
-    offered_history = ListField(editable=False)
+    offered_history = models.JSONField(editable=False)
     total_offered = models.IntegerField(default=0)
 
     class Meta:
@@ -86,7 +84,7 @@ class Coupon(AbstractWatchModel):
             ('service', 'slug'),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, **kwargs):
@@ -155,9 +153,9 @@ class Reward(Model):
     PAYMENT = 'Payment'  # Received after online payment
     MANUAL = 'Manual'  # Received after a mission
 
-    service = models.ForeignKey(Service, related_name='+')
-    member = models.ForeignKey(Member)
-    coupon = models.ForeignKey(Coupon, db_index=True)
+    service = models.ForeignKey(Service, related_name='+', on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, db_index=True, on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
     status = models.CharField(max_length=15, default=PREPARED, db_index=True)
     type = models.CharField(max_length=15, default=FREE, db_index=True)
@@ -167,8 +165,8 @@ class Reward(Model):
 
 
 class MemberCoupon(Model):
-    member = models.ForeignKey(Member)
-    coupon = models.ForeignKey(Coupon)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -196,8 +194,8 @@ class CouponSummary(Model):
     Summary of coupons earned by a Member on a Service
     regardless of what coupon it is.
     """
-    service = models.ForeignKey(Service, related_name='+')
-    member = models.ForeignKey(Member)
+    service = models.ForeignKey(Service, related_name='+', on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
     threshold_reached = models.BooleanField(default=False)
 
@@ -228,7 +226,7 @@ class CRProfile(Model):
     PAYMENT_REWARD = 2
     MANUAL_REWARD = 3
     FREE_REWARD = 4
-    member = models.OneToOneField(Member)
+    member = models.OneToOneField(Member, on_delete=models.CASCADE)
     reward_score = models.IntegerField(default=JOIN_REWARD, db_index=True)
     coupon_score = models.IntegerField(default=0, db_index=True)
     last_reward_date = models.DateTimeField(default=timezone.now, db_index=True)
@@ -250,13 +248,13 @@ class CRBillingPlan(Model):
     class Meta:
         verbose_name_plural = "CR Billing Plans"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class CROperatorProfile(AbstractWatchModel):
-    service = models.OneToOneField(Service, related_name='+')
-    plan = models.ForeignKey(CRBillingPlan, db_index=True)
+    service = models.OneToOneField(Service, related_name='+', on_delete=models.CASCADE)
+    plan = models.ForeignKey(CRBillingPlan, db_index=True, on_delete=models.CASCADE)
     billing_cycle = models.CharField(max_length=30, blank=True,
                                      choices=Service.BILLING_CYCLES_CHOICES, default=Service.QUARTERLY)
     monthly_cost = models.FloatField(default=0, db_index=True)
@@ -265,11 +263,11 @@ class CROperatorProfile(AbstractWatchModel):
     expiry = models.DateField(db_index=True)
     is_active = models.BooleanField(default=True)
 
-    push_history = ListField()
+    push_history = models.JSONField()
     # We intentionally write purchaseorder instead of purchase_order: DO NOT CHANGE THAT !
-    purchaseorder_history = ListField()
-    gift_history = ListField()
-    discount_history = ListField()
+    purchaseorder_history = models.JSONField()
+    gift_history = models.JSONField()
+    discount_history = models.JSONField()
 
     total_push = models.IntegerField(default=0)
     # We intentionally write purchaseorder instead of purchase_order: DO NOT CHANGE THAT !
@@ -291,7 +289,7 @@ class CROperatorProfile(AbstractWatchModel):
         return _("Continuous Rewarding: %s plan." % self.plan.name)
     details = property(_get_details)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.service)
 
 
@@ -299,8 +297,8 @@ class EarnedReward(Model):
     """
     Reward earned for your action on a Service
     """
-    service = models.ForeignKey(Service, related_name='+')
-    coupon = models.ForeignKey(Coupon)
+    service = models.ForeignKey(Service, related_name='+', on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
     count = models.IntegerField()
 
     class Meta:

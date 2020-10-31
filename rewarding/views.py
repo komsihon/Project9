@@ -8,7 +8,7 @@ from ajaxuploader.views import AjaxFileUploader, csrf_exempt
 from django.conf import settings
 from django.contrib import messages
 from django.core.files import File
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http.response import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.template import Context
